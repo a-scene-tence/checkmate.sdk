@@ -1,0 +1,232 @@
+# 체크메이트 SDK 사양서 (Apps in Toss)
+
+> 본 문서는 `checkmate.sdk` 리포지토리 내 `src/` 폴더에 있는 **Apps in Toss(AiT) 기반 React SDK**의 기획·기술 사양을 정의합니다.
+>
+> 정적 PWA(`html/`)의 사양은 [`spec.md`](./spec.md)를, 작업 규칙은 [`CLAUDE.md`](./CLAUDE.md)를 참조하세요.
+
+---
+
+## 1. 개요
+
+| 항목 | 내용 |
+|------|------|
+| 앱명 (코드) | `check-mate` (`granite.config.ts` 의 `appName`) |
+| 디스플레이명 | 체크메이트 |
+| 브랜드 색상 | `#00C896` |
+| 플랫폼 | **Apps in Toss (AiT)** — 토스 모바일 앱 내 웹 미니앱 |
+| 호스트 환경 | 토스 모바일 클라이언트(iOS/Android) 내 WebView 샌드박스 |
+| 진입점 | `src/main.tsx` → `<App />` (DOM `#root`) |
+| 빌드 산출물 | `dist/`(웹 번들) + `check-mate.ait`(AiT 아티팩트) |
+| 현재 상태 | **데모/템플릿 단계** — 본격 기능 미구현. PWA 마이그레이션 대상 |
+| 마지막 업데이트 | 2026-05-02 |
+
+---
+
+## 2. 기술 스택
+
+### 2.1 런타임
+| 카테고리 | 패키지 | 버전 | 역할 |
+|----------|--------|------|------|
+| UI 라이브러리 | `react` | ^18.3.1 | 컴포넌트 모델 |
+| DOM 렌더러 | `react-dom` | ^18.3.1 | 클라이언트 사이드 렌더링 (`createRoot`) |
+| 디자인 시스템 | `@toss/tds-mobile` | ^2.3.0 | Toss Design System(TDS) 모바일 컴포넌트. AiT가 모바일 호스트이므로 모바일 UI 패러다임 사용 |
+| AiT 프레임워크 | `@apps-in-toss/web-framework` | ^2.4.7 | AiT 플랫폼 통합. `granite`/`ait` CLI, 호스트 브릿지 API 제공 |
+
+### 2.2 빌드/개발 도구
+| 카테고리 | 패키지 | 버전 | 역할 |
+|----------|--------|------|------|
+| 번들러 | `vite` | ^8.0.10 | dev 서버 + 프로덕션 번들 |
+| React 통합 | `@vitejs/plugin-react` | ^6.0.1 | JSX 변환 (Oxc 기반) |
+| 언어 | `typescript` | ~6.0.2 | 타입 시스템 |
+| 린터 | `eslint` | ^10.2.1 | 코드 품질 검사 |
+| TS 린트 | `typescript-eslint` | ^8.58.2 | TS 인식형 린트 규칙 |
+| React 훅 린트 | `eslint-plugin-react-hooks` | ^7.1.1 | 훅 사용 규칙 검증 |
+| HMR 린트 | `eslint-plugin-react-refresh` | ^0.5.2 | Fast Refresh 호환성 검사 |
+
+---
+
+## 3. 파일 구조
+
+```
+checkmate.sdk/
+├── src/
+│   ├── main.tsx          # React 18 createRoot 진입점
+│   └── App.tsx           # 루트 컴포넌트 (현재 카운터 데모)
+├── index.html            # Vite 진입 HTML (script: src/main.tsx)
+├── public/               # Vite static asset 디렉터리
+├── granite.config.ts     # AiT 프레임워크 설정 (브랜드, 호스트, outdir)
+├── vite.config.ts        # Vite 설정 (React 플러그인)
+├── tsconfig.json         # 프로젝트 레퍼런스 루트
+├── tsconfig.app.json     # 애플리케이션 코드용 TS 설정
+├── tsconfig.node.json    # 설정 파일용 TS 설정
+├── eslint.config.js      # Flat Config
+└── package.json
+```
+
+> 📌 `html/` 폴더는 본 SDK와 **무관**. 별도의 정적 PWA로, Vercel 배포 대상입니다 (`spec.md` 참조).
+
+---
+
+## 4. NPM Scripts
+
+| 명령 | 실제 실행 | 용도 |
+|------|-----------|------|
+| `npm run dev` | `granite dev` | AiT 개발 서버. 내부적으로 Vite를 래핑하여 `localhost:5173` 기동. AiT 호스트 브릿지 시뮬레이션 포함 |
+| `npm run build` | `ait build` | 프로덕션 빌드 → `dist/` + `check-mate.ait` 아티팩트 생성 |
+| `npm run lint` | `eslint .` | 전체 ESLint 검사 |
+| `npm run preview` | `vite preview` | 빌드 결과물 로컬 프리뷰 |
+| `npm run deploy` | `ait deploy` | AiT 플랫폼에 `.ait` 아티팩트 업로드 |
+
+### 4.1 `granite` vs `ait`
+둘 다 `@apps-in-toss/web-framework` 패키지에서 제공되는 CLI:
+- **`granite`**: 개발 단계 도구. dev 서버, 환경 검사, 로컬 시뮬레이션
+- **`ait`**: 배포 단계 도구. 프로덕션 빌드, AiT 플랫폼 배포
+
+---
+
+## 5. 빌드 산출물
+
+### 5.1 `dist/` (Vite 번들)
+- `index.html` (Vite가 생성한 entry HTML)
+- `assets/*.js`, `assets/*.css` (해시 파일명)
+- 일반 SPA 정적 자산
+
+### 5.2 `check-mate.ait`
+- AiT 플랫폼이 이해할 수 있는 압축 아티팩트
+- 메타데이터(`appName`, 브랜드, 권한 등)와 `dist/` 콘텐츠를 포함
+- **2단계 빌드**:
+  - `Built for RN 0.84.0` (최신 토스 클라이언트용)
+  - `Built for RN 0.72.6` (구버전 호환)
+- 빌드 시 `deploymentId` UUID 발급 (예: `019de7c8-2eb2-719d-902c-d487d80d9136`)
+
+> 📌 **RN 버전 의미**: AiT는 React Native WebView 기반. 호스트(토스 앱)의 RN 버전에 따라 사용 가능한 Native API가 달라지므로 멀티 타깃 빌드 수행.
+
+---
+
+## 6. 설정 파일 상세
+
+### 6.1 `granite.config.ts`
+```typescript
+{
+  appName: 'check-mate',
+  brand: {
+    displayName: '체크메이트',
+    primaryColor: '#00C896',
+    iconUrl: '...'
+  },
+  web: {
+    host: 'localhost',
+    port: 5173,
+    commands: { dev: 'vite', build: 'vite build' }
+  },
+  outdir: 'dist',
+  permissions: []   // AiT 플랫폼 권한 요청 (카메라, 위치 등)
+}
+```
+
+### 6.2 `vite.config.ts`
+- `@vitejs/plugin-react` 플러그인만 활성화
+- 별도의 alias / server / build 옵션 없음 (Granite가 위임받음)
+
+### 6.3 TypeScript (`tsconfig.app.json`)
+- `target: ES2023`
+- `module: esnext`
+- `moduleResolution: bundler`
+- `jsx: react-jsx` (자동 import)
+- 엄격 옵션: `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`
+
+### 6.4 ESLint (`eslint.config.js`)
+- Flat Config 방식
+- `js.recommended` + `tseslint.recommended` + React Hooks/Refresh 규칙
+- `dist/` 제외
+
+---
+
+## 7. 진입 흐름
+
+```
+토스 앱 (RN 호스트)
+     │
+     ▼
+WebView 샌드박스
+     │
+     ▼
+index.html (Vite 빌드 결과)
+     │
+     ▼  <script type="module" src="/src/main.tsx">
+src/main.tsx
+     │
+     │  createRoot(#root).render(<StrictMode><App /></StrictMode>)
+     ▼
+src/App.tsx
+```
+
+---
+
+## 8. 권한 모델 (`permissions`)
+
+현재 `granite.config.ts`의 `permissions: []` (빈 배열). 향후 다음 기능을 사용하려면 추가 필요:
+
+| 기능 | 예상 permission 키 | 비고 |
+|------|-------------------|------|
+| 푸시 알림 | `notification` | 예산 초과 알림 등 |
+| 생체 인증 | `biometric` | 잠금 |
+| 클립보드 | `clipboard` | 거래 정보 공유 |
+| 파일 다운로드 | `file:download` | 백업 JSON 내보내기 |
+
+> ⚠️ 정확한 키 이름과 사용법은 AiT 공식 문서 확인 필요 (현재 미확정).
+
+---
+
+## 9. 현재 구현 상태
+
+- ✅ AiT 프로젝트 스캐폴딩 완료
+- ✅ React 18 + Vite 빌드 환경 구성
+- ✅ TDS Mobile 통합
+- ✅ 빌드 파이프라인 검증 (`ait build` 성공)
+- ❌ 실 기능 미구현 (`App.tsx`는 카운터 템플릿)
+- ❌ `html/` PWA 기능을 SDK로 포팅 미진행
+
+---
+
+## 10. 향후 마이그레이션 로드맵
+
+현재 운영은 `html/` 정적 PWA가 담당 (Vercel). 본 SDK는 향후 다음 시나리오로 발전:
+
+### 시나리오 A: AiT 단독 배포
+- `html/` PWA의 모든 기능을 `src/`의 React 컴포넌트로 포팅
+- TDS Mobile 컴포넌트로 UI 재구성
+- Supabase 인증 → AiT 호스트 인증 API 활용 검토
+- Google Drive 동기화 → AiT 파일 시스템 API 또는 자체 백엔드
+- 배포: `npm run deploy` → AiT 플랫폼만 사용 (Vercel 종료)
+
+### 시나리오 B: 듀얼 배포 (웹 PWA + AiT)
+- `dist/` 빌드 결과물을 Vercel에도 배포 (PWA 유지)
+- `vercel.json` 수정:
+  - `buildCommand`: `npm run build` (단, AiT 빌드 후 `dist/`만 사용)
+  - `outputDirectory`: `dist`
+- `html/` 폴더 제거 또는 `legacy/`로 이동
+
+### 시나리오 C: 모노레포 분리
+- `packages/sdk` (React 컴포넌트)
+- `packages/web-pwa` (정적 PWA, 점진 폐기)
+- `packages/ait-app` (AiT 진입점)
+- 공통 비즈니스 로직 패키지 추출
+
+> 마이그레이션 결정 시점에 본 문서와 `docs/spec.md`, `docs/CLAUDE.md`를 동시 갱신.
+
+---
+
+## 11. 알려진 제약 / 주의사항
+
+- **React Native peer dependency 충돌 경고**: 빌드 시 `@apps-in-toss/analytics`가 `react@^19.2.3`을 요구하지만 본 프로젝트는 `react@18.3.1`. npm이 자동 오버라이드하므로 빌드는 성공하나, RN 0.85.x 의존 트리에서 잠재적 호환성 이슈 가능. 향후 React 19 업그레이드 검토 필요.
+- **CSS @import 위치 경고**: 빌드 로그에서 `@import url(...nanumSquareNeo.css)`가 다른 규칙 뒤에 위치한다는 PostCSS 경고. 동작에는 영향 없으나 정리 권장.
+- **deprecated 패키지 다수**: 트랜지티브 의존성에 `glob@7`, `rimraf@2/3`, `inflight` 등 deprecated 패키지 다수. AiT 프레임워크 측 업데이트 대기.
+
+---
+
+## 12. 변경 이력
+
+| 날짜 | 변경 내용 | PR |
+|------|-----------|-----|
+| 2026-05-02 | 초기 SDK 사양서 작성 | (이 PR) |
