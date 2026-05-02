@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "html",
+  "routes": [
+    { "src": "/auth", "dest": "/auth.html" },
+    { "src": "/auth/callback", "dest": "/auth.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
