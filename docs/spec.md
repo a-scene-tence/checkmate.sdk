@@ -2,6 +2,10 @@
 
 > 본 문서는 `checkmate.sdk` 리포지토리 내 `html/` 폴더에 있는 정적 PWA "체크메이트"의 기획 및 기술 사양을 정의합니다.
 > 코드 변경 시 해당 섹션을 반드시 함께 업데이트해야 합니다.
+>
+> 관련 문서:
+> - SDK 사양: [`sdk-spec.md`](./sdk-spec.md) — `src/` React + AiT SDK
+> - 작업 규칙: [`CLAUDE.md`](./CLAUDE.md)
 
 ---
 
@@ -162,16 +166,15 @@ Vercel 배포 설정:
 
 | 날짜 | 변경 내용 | PR |
 |------|-----------|-----|
-| 2026-05-02 | 초기 spec 작성 | (이 PR) |
+| 2026-05-02 | 초기 spec 작성 | #2 |
 | 2026-05-02 | Vercel 배포를 checkmate.sdk로 통합 (`html/vercel.json` 제거, 루트 `vercel.json` 신설) | #1 |
 
 ---
 
-## 9. 향후 마이그레이션 메모
+## 9. SDK와의 관계 / 마이그레이션
 
-현재 구조는 정적 PWA를 그대로 서빙하지만, 장기적으로는 `src/` 의 React + AiT(Apps in Toss) SDK로 마이그레이션 예정.
+현재 운영은 본 PWA(`html/`)가 단독 담당. 동일 리포지토리의 `src/`에는 별도의 React + AiT SDK가 존재하며 향후 마이그레이션 대상.
 
-마이그레이션 완료 시 본 문서를 다음과 같이 갱신:
-- §2 기술 스택 → React + Vite + AiT 기반으로 변경
-- §3 파일 구조 → `src/` 컴포넌트 트리로 변경
-- §4 루트 `vercel.json` → `buildCommand: "npm run build"`, `outputDirectory: "dist"`
+- SDK 상세 사양: **[`sdk-spec.md`](./sdk-spec.md)**
+- 마이그레이션 시나리오: `sdk-spec.md` § 10 참조
+- 마이그레이션 시점에 본 문서 § 2(기술 스택), § 3(파일 구조), § 4(라우팅) 전면 재작성 필요
