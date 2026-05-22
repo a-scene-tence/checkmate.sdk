@@ -361,6 +361,18 @@ details[open].detail-box summary::after { content: " ▲"; }
   color: var(--text);
 }
 
+/* ── 커스텀 Confirm/Alert 모달 ── */
+#cm-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;padding:24px;}
+#cm-modal-overlay.open{display:flex;}
+#cm-modal-box{background:var(--surface,white);border-radius:16px;width:100%;max-width:320px;padding:24px 20px 16px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+#cm-modal-title{font-size:16px;font-weight:800;color:var(--text,#111);margin-bottom:10px;line-height:1.4;}
+#cm-modal-msg{font-size:14px;color:var(--muted,#666);line-height:1.6;margin-bottom:20px;white-space:pre-wrap;}
+#cm-modal-btns{display:flex;gap:8px;justify-content:flex-end;}
+#cm-modal-btns button{padding:10px 18px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;min-width:72px;}
+#cm-modal-cancel{background:var(--s2,#f1f3f5);color:var(--muted,#555);}
+#cm-modal-ok{background:var(--p,#3182F6);color:white;}
+#cm-modal-ok.danger{background:#ef4444;}
+
 </style>
 </head>
 <body>
