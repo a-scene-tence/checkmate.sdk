@@ -221,6 +221,29 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.4 [2026-05-22] PR #4 회귀 — cm-modal CSS 누락
+
+**증상**:
+- 설정 → "JSON에서 불러오기" 클릭 시 확인 다이얼로그(`백업 복원` 제목, `[취소][확인]` 버튼)가 모달 박스 없이 화면 좌하단 영역 밖에 unstyled raw text로 노출
+- 동일 증상: `resetData`(데이터 초기화), 자산/카테고리/내역 삭제 등 `cmConfirm()` 호출 모든 위치
+
+**원인**:
+- PR #4에서 `html/index.html`의 Google Drive 관련 CSS 블록(원본 main 라인 386-438)을 연속 범위로 일괄 삭제
+- 그 범위 **중간** 라인 401-411에 Drive와 무관한 `#cm-modal-overlay`, `#cm-modal-box` 등 11줄의 커스텀 Confirm/Alert 모달 CSS가 끼어 있었음
+- 시작·끝 마커(`/* ── Google Drive 동의 모달 ── */` → `.drive-sync-btn .dsb-desc{...}`)만 확인하고 중간 selector를 검증하지 않아 무관한 CSS가 함께 사라짐
+- JS의 `cmConfirm()`과 HTML의 `<div id="cm-modal-overlay">`는 그대로 남아 있어 모달은 DOM에 생성되지만, CSS 부재로 `position:fixed`·`display:flex`·`z-index:9000` 적용 실패 → 일반 흐름(static)에서 body 끝에 텍스트로 노출
+
+**해결**:
+- `html/index.html`의 `</style>` 직전에 원본 11줄 CSS를 글자 단위 동일하게 복원
+
+**예방책**:
+- ⛔️ **연속 라인 범위 일괄 삭제 금지** — 시작·끝 마커가 명확해도 범위 내 모든 selector/식별자가 삭제 대상에 속하는지 사전 검증할 것
+- ✅ 대량 코드 제거 작업 시: `grep -n` 으로 삭제 대상 키워드(`drive-`, `sb-`, `supabase` 등) 매치 라인만 추출 → 그 라인들만 제거. 라인 범위 기반 일괄 삭제는 지양
+- ✅ 대량 제거 후 자동 검증 grep에 **무관 잔존 코드의 존재 확인**도 포함 (예: cmConfirm 호출 5건이 있는데 cm-modal CSS가 0건이면 즉시 경고)
+- ✅ 시각적 회귀가 우려되는 UI 컴포넌트 변경 시 Vercel Preview에서 모든 cmConfirm 사용처 클릭 테스트 (백업 복원, 데이터 초기화, 자산/카테고리/내역 삭제)
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
