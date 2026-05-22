@@ -24,6 +24,8 @@
 
 **두 영역의 관계**: 루트 `vercel.json` 설정에 따라 **현재는 `html/`만 배포됨**. SDK는 `npm run deploy`로 별도 AiT 플랫폼에 배포 가능.
 
+> **현재 PWA는 외부 서버 연동 없는 100% 로컬 전용 앱입니다.** 과거에는 Google OAuth(Supabase) + Google Drive 백업이 있었으나 2026-05-21 제거됨 (§ 7.3 참조).
+
 ---
 
 ## 2. 작업 흐름 (필수)
@@ -53,9 +55,10 @@
 - ❌ **`html/vercel.json` 재생성 금지** — 라우팅 설정은 루트 `vercel.json` 단일 진실. 중복 시 Vercel 동작 예측 불가
 - ❌ **루트 `vercel.json`의 `outputDirectory`를 `html` 외 값으로 변경 금지** — 현재 PWA 배포가 즉시 중단됨
 - ❌ **루트 `vercel.json`의 `buildCommand`를 `npm run build` 등으로 변경 금지** — Vite가 작동하여 `dist/` 생성, 그러나 `html/` 자산이 아닌 React 데모만 배포됨 (마이그레이션 완료 전까지)
-- ❌ **`html/index.html`의 인라인 Supabase URL/Key 무단 변경 금지** — 변경 시 `docs/spec.md` §5.5 동시 갱신 필수
+- ❌ **Google OAuth, Supabase, Google Drive API, Firebase 등 외부 인증/저장 서비스 재도입 금지** — PWA는 로컬 전용으로 운영 중. 재도입 시 반드시 별도 의사결정 PR + spec.md/CLAUDE.md 사전 갱신
 - ❌ **Service Worker(`sw.js`) 캐시 키 무단 변경 금지** — 사용자 기기에 잔여 캐시 충돌 발생. 변경 시 반드시 캐시 버전 숫자 증가
 - ❌ **`public/`에 중복 PWA 자산 추가 금지** — `public/`은 Vite/SDK용. Vercel 배포는 `html/`만 사용. `html/`만 단일 진실로 유지
+- ❌ **로컬스토리지 키 이름 변경 금지** — 기존 사용자의 데이터가 유실됨. 스키마 마이그레이션이 필요한 경우 마이그레이션 코드 작성 후 수정
 
 ### 3.2 SDK / AiT 관련
 - ❌ **`granite.config.ts`의 `appName` 변경 금지** — AiT 플랫폼에서 앱 식별자로 사용됨. 변경 시 별도 앱으로 인식되어 사용자 데이터 분리
@@ -73,10 +76,11 @@
 ## 4. 권장 사항 (Do)
 
 ### 4.1 PWA 작업
-- ✅ **대형 파일 수정 시**: `html/index.html`(~223KB)은 grep으로 정확한 위치 찾은 후 부분 수정
+- ✅ **대형 파일 수정 시**: `html/index.html`은 grep으로 정확한 위치 찾은 후 부분 수정
 - ✅ **로컬 검증**: `cd html && python -m http.server 8000`으로 정적 서빙 후 미리보기
-- ✅ **라우팅 검증**: PR 머지 전 `/`, `/auth`, `/auth/callback`, `/privacy.html` 모두 정상 응답하는지 확인
+- ✅ **라우팅 검증**: PR 머지 전 `/`, `/privacy.html` 정상 응답 확인
 - ✅ **Service Worker 변경 시**: 캐시 버전 숫자 증가 (`const CACHE_NAME = 'checkmate-vN'` → `vN+1`)
+- ✅ **데이터 스키마 변경 시**: 기존 로컬스토리지 데이터 마이그레이션 코드 작성. JSON 백업/복원 포맷도 함께 갱신
 
 ### 4.2 SDK 작업
 - ✅ **컴포넌트 추가 시**: `@toss/tds-mobile`의 기존 컴포넌트 사용 우선 검토 (재발명 방지)
@@ -100,8 +104,6 @@
   "buildCommand": "",
   "outputDirectory": "html",
   "routes": [
-    { "src": "/auth", "dest": "/auth.html" },
-    { "src": "/auth/callback", "dest": "/auth.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
@@ -111,7 +113,7 @@
 - `framework: null` → Vercel의 Vite 자동 감지 차단
 - `buildCommand: ""` → 빌드 단계 스킵
 - `outputDirectory: "html"` → `html/` 폴더를 정적 서빙 루트로 지정
-- `routes` → `/auth`, `/auth/callback`이 `auth.html`로 라우팅, 나머지는 그대로
+- `routes` → catch-all 만 존재 (auth.html 제거 후 별도 라우팅 없음)
 
 ---
 
@@ -192,6 +194,33 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.3 [2026-05-21] Google 인증 / Drive 동기화 완전 제거
+
+**상황** (버그 아닌 의사결정 기록):
+- PWA는 Supabase OAuth(Google 로그인) + Google Drive 앱 전용 폴더 자동 동기화를 제공하고 있었음
+- 외부 서비스 의존성(Supabase URL/Key, Google OAuth Client ID, Drive Scope)이 유지보수 부담
+- 개인정보 처리 범위 넓음 (이름/이메일/프로필 수집)
+
+**결정**:
+- 외부 인증/동기화 완전 제거 → 100% 로컬 전용 앱으로 전환
+- 로컬 JSON 백업/복원만 유지 (기존에 이미 구현되어 있으므로 자연스러운 대체재)
+- 기존 Drive 사용자 대상 마이그레이션 안내는 제공하지 않음 (사용자 판단)
+
+**수행**:
+- `html/auth.html` 삭제
+- `html/index.html`에서 Supabase/Drive/OAuth 관련 코드 전면 제거
+- `vercel.json`에서 `/auth`, `/auth/callback` 라우팅 제거
+- `html/sw.js` CACHE_NAME v2 → v3 증가
+- `html/privacy.html` 전면 개정
+
+**예방책 / 향후 규칙**:
+- ✅ 외부 인증/저장 서비스 재도입은 사용자 명시적 요구 시에만으로 제한 (§ 3.1 규칙 적용)
+- ✅ 재도입 결정 시 privacy.html, spec.md § 5.5/5.6/7, 본 문서 § 1, § 3.1 모두 사전 갱신
+- ✅ 외부 CDN 추가 시 Service Worker 캐시 전략 검토 필수
+- ✅ 이전 코드 참조 용도명: `git log --all -- html/auth.html` 또는 PR #4 history 확인
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
@@ -199,12 +228,13 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 | 작업 | 업데이트 대상 |
 |------|---------------|
 | `html/` 내 파일 추가/삭제 | `docs/spec.md` §3 |
-| PWA에 새 기능 추가 (탭, 뷰, 인증 흐름 등) | `docs/spec.md` §5 |
+| PWA에 새 기능 추가 (탭, 뷰 등) | `docs/spec.md` §5 |
 | `html/manifest.json` 변경 | `docs/spec.md` §6.1 |
 | Service Worker 캐시 전략 변경 | `docs/spec.md` §6.2, `docs/CLAUDE.md` §3.1 (필요 시) |
-| 개인정보 정책 변경 | `docs/spec.md` §7 |
+| 개인정보 정책 변경 | `docs/spec.md` §7, `html/privacy.html` |
 | `vercel.json` 변경 | `docs/spec.md` §4, `docs/CLAUDE.md` §5 |
-| 외부 의존성 추가 (Supabase, Drive 외 신규) | `docs/spec.md` §2 |
+| 외부 의존성 추가 (CDN, 서비스) | `docs/spec.md` §2, `docs/CLAUDE.md` §3.1 검토 |
+| 외부 인증/저장 서비스 재도입 | 독립 PR + 사용자 승인 필수 → 본 문서 전면 갱신 |
 | `src/` 컴포넌트/로직 변경 | `docs/sdk-spec.md` §3, §7 |
 | `package.json` dependency 변경 | `docs/sdk-spec.md` §2 |
 | `granite.config.ts` 변경 | `docs/sdk-spec.md` §6.1 |
@@ -227,6 +257,7 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 - [ ] 루트 `vercel.json`의 `outputDirectory`를 변경하지 않았는가?
 - [ ] Service Worker 변경 시 캐시 버전을 올렸는가?
 - [ ] 로컬에서 정적 서버로 검증했는가?
+- [ ] 외부 인증/저장 서비스 재도입이 없는가? (있다면 사용자 승인 받았는가?)
 
 ### 9.3 SDK(`src/`) PR
 - [ ] `npm run lint` 통과 (0 errors)?
