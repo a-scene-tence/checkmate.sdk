@@ -420,7 +420,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     <div id="ov-p-main">
       <div class="card">
         <div class="strip" style="background:var(--p)"></div>
-        <div class="ctitle">여유자금</div>
+        <div class="ctitle">여유자금 <span style="font-size:11px;font-weight:400;color:var(--muted);">· 이번 달 자유롭게 쓸 수 있는 돈</span></div>
         <div class="balmain"><span class="balamt" id="p-amt">₩0</span><span style="font-size:11px;color:var(--muted)" id="p-lbl">잔액</span></div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <div style="font-size:11px;color:var(--muted);white-space:nowrap;text-align:left">
@@ -433,6 +433,7 @@ details[open].detail-box summary::after { content: " ▲"; }
             <div id="p-flex-now" style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--text)">₩0</div>
           </div>
         </div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">잔고 − 전월 카드대금 − 고정 예산</div>
         <div style="border-top:1px solid var(--border);margin:10px 0"></div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px">계좌 + 현금 잔액</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -518,7 +519,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     <div id="ov-j-main">
       <div class="card">
         <div class="strip" style="background:var(--j)"></div>
-        <div class="ctitle">공동 잔액</div>
+        <div class="ctitle">공동 잔액 <span style="font-size:11px;font-weight:400;color:var(--muted);">· 공동 통장에 남은 돈</span></div>
         <div class="balmain"><span class="balamt" id="j-amt">₩0</span><span style="font-size:11px;color:var(--muted)" id="j-lbl">잔액</span></div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
           <div style="font-size:11px;color:var(--muted);white-space:nowrap;text-align:left">
@@ -675,9 +676,13 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div class="ctitle">개인 월별 결산</div>
       <div class="sg" style="margin-bottom:12px">
         <div class="si2"><div class="sl">월초 잔액</div><div class="sv" id="sp-budget">₩0</div></div>
-        <div class="si2"><div class="sl">실제 수지 합계</div><div class="sv" id="sp-spent">₩0</div></div>
-        <div class="si2"><div class="sl">절약 / 초과</div><div class="sv" id="sp-diff">-</div></div>
+        <div class="si2"><div class="sl">이번 달 순지출</div><div class="sv" id="sp-spent">₩0</div></div>
+        <div class="si2"><div class="sl">월초 대비 남음</div><div class="sv" id="sp-diff">-</div></div>
         <div class="si2"><div class="sl">절약률</div><div class="sv" id="sp-rate">-</div></div>
+      </div>
+      <div class="note" style="margin:0 0 12px;font-size:11px;line-height:1.5;">
+        💡 <b>순지출</b> = 지출 − 수입 · <b>남음</b> = 월초 잔액 − 순지출<br>
+        아래 표의 <b>차이</b> = 카테고리 예산 − 수지
       </div>
       <div class="settle-header">
         <span></span><span>카테고리</span><span style="text-align:right">예산</span><span style="text-align:right">수지</span><span style="text-align:right">차이</span>
@@ -691,9 +696,13 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div class="ctitle">공동 월별 결산</div>
       <div class="sg" style="margin-bottom:12px">
         <div class="si2"><div class="sl">월초 잔액</div><div class="sv" id="sj-budget">₩0</div></div>
-        <div class="si2"><div class="sl">실제 수지 합계</div><div class="sv" id="sj-spent">₩0</div></div>
-        <div class="si2"><div class="sl">절약 / 초과</div><div class="sv" id="sj-diff">-</div></div>
+        <div class="si2"><div class="sl">이번 달 순지출</div><div class="sv" id="sj-spent">₩0</div></div>
+        <div class="si2"><div class="sl">월초 대비 남음</div><div class="sv" id="sj-diff">-</div></div>
         <div class="si2"><div class="sl">절약률</div><div class="sv" id="sj-rate">-</div></div>
+      </div>
+      <div class="note" style="margin:0 0 12px;font-size:11px;line-height:1.5;">
+        💡 <b>순지출</b> = 지출 − 수입 · <b>남음</b> = 월초 잔액 − 순지출<br>
+        아래 표의 <b>차이</b> = 카테고리 예산 − 수지
       </div>
       <div class="settle-header">
         <span></span><span>카테고리</span><span style="text-align:right">예산</span><span style="text-align:right">수지</span><span style="text-align:right">차이</span>
@@ -2212,9 +2221,11 @@ function renderTxFilter() {
     {id:'expense', label:'📉 지출'},
     ...catList.map(c=>({id:`cat:${c.name}`, label:`${c.emoji} ${c.name}`})),
   ];
-  document.getElementById('txfilter').innerHTML = filters.map(f=>
-    `<button class="txftab${txFilter===f.id?' active '+actCls:''}" onclick="setTxFilter('${f.id}')">${f.label}</button>`
-  ).join('');
+  document.getElementById('txfilter').innerHTML =
+    `<span style="font-size:11px;font-weight:600;color:var(--muted);margin-right:4px;align-self:center;">필터</span>` +
+    filters.map(f=>
+      `<button class="txftab${txFilter===f.id?' active '+actCls:''}" onclick="setTxFilter('${f.id}')">${f.label}</button>`
+    ).join('');
 }
 
 function highlight(text, q) {
@@ -2350,7 +2361,7 @@ function renderTx(t) {
         html += `<div class="empty" style="padding:24px 20px"><p>이 날짜엔 내역이 없어요</p></div>`;
       }
     } else {
-      html += `<div class="empty" style="padding:24px 20px"><div style="font-size:24px;margin-bottom:8px">👆</div><p>날짜를 탭하면<br>상세 내역을 확인할 수 있어요</p></div>`;
+      html += `<div class="empty" style="padding:24px 20px"><div style="font-size:24px;margin-bottom:8px">👆</div><p>날짜를 탭해 내역을 보거나<br>오른쪽 아래 <b>+</b> 버튼으로 새 거래를 추가하세요</p></div>`;
     }
     el.innerHTML = html;
     requestAnimationFrame(fitCalAmounts);
@@ -2568,6 +2579,7 @@ function renderAssets() {
           </div>
         </div>
         <div class="asset-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:-4px;">현재 잔액</div>
           <div class="asset-bal" style="color:${a.color}">${fmt(r.balance)}</div>
           <button onclick="openLiquidate('${a.id}')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1.5px solid ${a.color};color:${a.color};background:${a.color}14;cursor:pointer;">매도</button>
         </div>
