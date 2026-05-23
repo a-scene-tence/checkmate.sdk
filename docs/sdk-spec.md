@@ -49,13 +49,17 @@
 
 ```
 checkmate.sdk/
-├── src/
-│   ├── main.tsx          # React 18 createRoot 진입점
-│   └── App.tsx           # 루트 컴포넌트 (현재 카운터 데모)
-├── index.html            # Vite 진입 HTML (script: src/main.tsx)
-├── public/               # Vite static asset 디렉터리
+├── html/                 # PWA 단일 소스 — Vercel(정적) + AiT(Vite 빌드) 공통
+│   ├── index.html        # 앱 본체 (인라인 CSS/JS, 외부 의존성 없음)
+│   ├── sw.js             # Service Worker (CACHE_NAME checkmate-v3)
+│   ├── manifest.json     # PWA 매니페스트
+│   ├── icon-*.png        # 앱 아이콘
+│   └── privacy.html      # 개인정보 처리방침
+├── src/                  # React 카운터 데모 (미사용 — 추후 정리 예정)
+│   ├── main.tsx
+│   └── App.tsx
 ├── granite.config.ts     # AiT 프레임워크 설정 (브랜드, 호스트, outdir)
-├── vite.config.ts        # Vite 설정 (React 플러그인)
+├── vite.config.ts        # Vite 설정 — root: html/, 해싱 비활성화, 복사 플러그인
 ├── tsconfig.json         # 프로젝트 레퍼런스 루트
 ├── tsconfig.app.json     # 애플리케이션 코드용 TS 설정
 ├── tsconfig.node.json    # 설정 파일용 TS 설정
@@ -63,7 +67,7 @@ checkmate.sdk/
 └── package.json
 ```
 
-> 📌 `html/` 폴더는 본 SDK와 **무관**. 별도의 정적 PWA로, Vercel 배포 대상입니다 (`spec.md` 참조).
+> 📌 `html/`은 **Vercel과 AiT 양쪽의 단일 소스**. Vercel은 정적으로 서빙하고, AiT는 `vite build`(root: html/)로 번들해 `dist/`를 산출한다. 두 배포 경로 모두 `html/`의 파일을 직접 사용하므로 `html/` 외부에 앱 파일을 복제해서는 안 된다.
 
 ---
 
@@ -125,8 +129,12 @@ checkmate.sdk/
 ```
 
 ### 6.2 `vite.config.ts`
-- `@vitejs/plugin-react` 플러그인만 활성화
-- 별도의 alias / server / build 옵션 없음 (Granite가 위임받음)
+- `root: 'html'` — `html/index.html`이 빌드 엔트리. `src/main.tsx` 불사용.
+- `base: './'` — AiT WebView 서빙 경로 불확실 → 상대 경로
+- `publicDir: false` — 루트 `public/`(삭제됨)이 `dist/`로 복사되지 않도록
+- `assetsInlineLimit: 0` + `assetFileNames: '[name][extname]'` — 해싱 전면 비활성화. `sw.js` CORE_ASSETS와 `manifest.json` icons가 평문 이름으로 에셋을 참조하므로 해싱 시 SW install 실패.
+- `copyPwaAssets` 인라인 플러그인 (의존성 추가 없음) — Vite가 탐지하지 못하는 `sw.js`, `privacy.html` 등을 `closeBundle`에서 `dist/`로 복사
+- `@vitejs/plugin-react` 제거 — 빌드가 React를 사용하지 않음
 
 ### 6.3 TypeScript (`tsconfig.app.json`)
 - `target: ES2023`
@@ -153,12 +161,11 @@ WebView 샌드박스
      ▼
 index.html (Vite 빌드 결과)
      │
-     ▼  <script type="module" src="/src/main.tsx">
-src/main.tsx
+     ▼  html/index.html (인라인 CSS+JS, 외부 의존성 없음)
      │
-     │  createRoot(#root).render(<StrictMode><App /></StrictMode>)
+     │  localStorage('hb5') — 트랜잭션·카테고리·에셋 데이터
      ▼
-src/App.tsx
+5개 탭 (요약 / 결산 / 내역 / 자산 / 설정) — 순수 바닐라 JS
 ```
 
 ---
@@ -181,39 +188,40 @@ src/App.tsx
 ## 9. 현재 구현 상태
 
 - ✅ AiT 프로젝트 스캐폴딩 완료
-- ✅ React 18 + Vite 빌드 환경 구성
-- ✅ TDS Mobile 통합
-- ✅ 빌드 파이프라인 검증 (`ait build` 성공)
-- ❌ 실 기능 미구현 (`App.tsx`는 카운터 템플릿)
-- ❌ `html/` PWA 기능을 SDK로 포팅 미진행
+- ✅ Vite 빌드 환경 구성 (`root: 'html'`, 해싱 비활성화, 복사 플러그인)
+- ✅ **`ait build`가 현행 PWA(`html/index.html`)를 번들** — `dist/` + `check-mate.ait` 산출
+- ✅ `html/`이 Vercel(정적)·AiT(Vite 빌드) 공통 단일 소스로 정립
+- ⚠️ `ait deploy`는 토스 AiT 계정 인증 필요 → 사용자 수동 실행 (`npm run deploy`)
+- ❌ `src/` React 카운터 데모는 미사용 상태 (추후 정리 예정)
 
 ---
 
-## 10. 향후 마이그레이션 로드맵
+## 10. 배포 전략
 
-현재 운영은 `html/` 정적 PWA가 담당 (Vercel). 본 SDK는 향후 다음 시나리오로 발전:
+### 현재 채택 방향: PWA 웹번들 배포 (2026-05-23 시행)
 
-### 시나리오 A: AiT 단독 배포
-- `html/` PWA의 모든 기능을 `src/`의 React 컴포넌트로 포팅
-- TDS Mobile 컴포넌트로 UI 재구성
-- Supabase 인증 → AiT 호스트 인증 API 활용 검토
-- Google Drive 동기화 → AiT 파일 시스템 API 또는 자체 백엔드
-- 배포: `npm run deploy` → AiT 플랫폼만 사용 (Vercel 종료)
+- `html/index.html`(완성된 기능의 PWA)을 Vite로 번들해 AiT 웹앱으로 배포하는 접근을 채택.
+- 이는 문서화된 시나리오 A/B/C의 변형: React 재작성 없이 현행 PWA를 즉시 배포.
+- `html/`이 Vercel(정적 서빙)·AiT(`vite build` 번들) 양쪽의 단일 소스.
 
-### 시나리오 B: 듀얼 배포 (웹 PWA + AiT)
-- `dist/` 빌드 결과물을 Vercel에도 배포 (PWA 유지)
-- `vercel.json` 수정:
-  - `buildCommand`: `npm run build` (단, AiT 빌드 후 `dist/`만 사용)
-  - `outputDirectory`: `dist`
-- `html/` 폴더 제거 또는 `legacy/`로 이동
+**AiT 배포 절차** (인증 필요):
+```bash
+npm ci              # 의존성 설치
+npm run build       # dist/ + check-mate.ait 생성
+npm run deploy      # 사용자 토스 AiT 계정으로 수동 실행
+```
 
-### 시나리오 C: 모노레포 분리
-- `packages/sdk` (React 컴포넌트)
-- `packages/web-pwa` (정적 PWA, 점진 폐기)
-- `packages/ait-app` (AiT 진입점)
-- 공통 비즈니스 로직 패키지 추출
+### 향후 선택지
 
-> 마이그레이션 결정 시점에 본 문서와 `docs/spec.md`, `docs/CLAUDE.md`를 동시 갱신.
+#### 시나리오 A: React + TDS Mobile 재작성
+- `src/`의 React 컴포넌트로 PWA 기능 전면 포팅, TDS Mobile UI 적용.
+- 대규모 작업. `html/` 역할 종료 후 삭제.
+
+#### 시나리오 B: Vercel도 빌드 결과물 서빙
+- `vercel.json`의 `buildCommand: npm run build`, `outputDirectory: dist`로 변경.
+- PWA/AiT 동일 번들, `html/` 삭제.
+
+> 시나리오 변경 결정 시 본 문서와 `docs/spec.md`, `docs/CLAUDE.md`를 동시 갱신.
 
 ---
 
@@ -230,3 +238,4 @@ src/App.tsx
 | 날짜 | 변경 내용 | PR |
 |------|-----------|-----|
 | 2026-05-02 | 초기 SDK 사양서 작성 | (이 PR) |
+| 2026-05-23 | AiT 빌드 파이프라인 정비: Vite root를 `html/`로 재지정, 에셋 해싱 비활성화, 복사 플러그인 추가 — `ait build`가 현행 PWA를 번들하도록 수정. 구버전 루트 `index.html`·`public/` 삭제, `*.ait` gitignore 추가 | #9 |

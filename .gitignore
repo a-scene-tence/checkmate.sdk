@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .granite
+
+# AiT build artifact
+*.ait

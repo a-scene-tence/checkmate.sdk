@@ -175,8 +175,9 @@ Vercel 배포 설정:
 
 ## 9. SDK와의 관계 / 마이그레이션
 
-현재 운영은 본 PWA(`html/`)가 단독 담당. 동일 리포지토리의 `src/`에는 별도의 React + AiT SDK가 존재하며 향후 마이그레이션 대상.
+`html/`은 Vercel(정적 서빙)과 앱인토스 AiT(Vite 빌드 번들) 양쪽의 **단일 소스**다.
 
-- SDK 상세 사양: **[`sdk-spec.md`](./sdk-spec.md)**
-- 마이그레이션 시나리오: `sdk-spec.md` § 10 참조
-- 마이그레이션 시점에 본 문서 § 2(기술 스택), § 3(파일 구조), § 4(라우팅) 전면 재작성 필요
+- **Vercel**: `buildCommand: ""`, `outputDirectory: "html"` — `html/`을 정적으로 서빙.
+- **앱인토스 AiT**: `vite build`(root: html/) → `dist/` → `npm run deploy`. 토스 AiT 계정 인증 필요.
+- `html/` 파일 수정 시 두 배포 경로 모두에 반영됨. `html/` 외부에 앱 파일 복제 금지.
+- SDK 상세 사양(설정, 빌드 파이프라인, 배포 절차): **[`sdk-spec.md`](./sdk-spec.md)**
