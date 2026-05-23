@@ -185,6 +185,12 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 .brow-result{font-family:Arial,sans-serif;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block;margin-top:4px;}
 .brow-result.p-col{color:var(--p);background:var(--plt);}
 .brow-result.j-col{color:var(--j);background:var(--jlt);}
+.brow-typeseg{display:inline-flex;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;}
+.brow-typeseg-btn{font-size:11px;font-weight:600;padding:5px 10px;border:none;background:white;color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit;}
+.brow-typeseg-btn.active.fixed{background:#F0F0FF;color:#5555AA;}
+.brow-typeseg-btn.active.avg{background:var(--plt);color:var(--p);}
+.brow-typeseg-btn:not(.active):hover{background:var(--s2);}
+.brow-typeseg-btn:active{transform:scale(0.95);}
 
 
 /* Backup */
@@ -2673,20 +2679,22 @@ function renderBudgetSection(type) {
           <span style="font-size:13px; font-weight:600;">원</span>
         </div>
         <details style="margin-top:12px;">
-          <summary style="font-size:11px; color:var(--muted); cursor:pointer; outline:none; font-weight:500;">⚙️ 세부 조정 (과거 반영 및 이번 달 특별 예산)</summary>
-          <div style="padding-top:12px; margin-top:8px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:11px; color:var(--text);">과거 유지기간 (선택)</span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <input type="number" class="sinp" style="width:40px; text-align:center; padding:6px;" value="${c.seedMonths||''}" placeholder="0" onchange="updCatField('${type}',${i},'seedMonths',this.value)">
-                <span style="font-size:11px; color:var(--muted);">개월 전부터 썼다고 가정</span>
+          <summary style="font-size:11px; color:var(--muted); cursor:pointer; outline:none; font-weight:500;">⚙️ 고급 설정 (보통은 그냥 두세요)</summary>
+          <div style="padding-top:14px; margin-top:8px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:16px;">
+            <div>
+              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">📅 앱 시작 전부터 써왔나요?</div>
+              <div style="font-size:11px; color:var(--muted); margin-bottom:8px; line-height:1.4;">이전부터 쓰던 카테고리라면 개월 수를 입력하세요. 평균이 더 정확해져요.</div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <input type="number" class="sinp" style="width:60px; text-align:center; padding:6px;" value="${c.seedMonths||''}" placeholder="0" onchange="updCatField('${type}',${i},'seedMonths',this.value)">
+                <span style="font-size:12px; color:var(--text);">개월</span>
               </div>
             </div>
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:11px; color:var(--text);">이번 달만 예외 조정</span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <input type="text" inputmode="numeric" class="sinp sinp-comma-adj" style="width:100px; color:${adjColor}; border-color:${adjVal?adjColor:'var(--border)'}" value="${adjVal ? (adjVal>0?'+':'')+adjVal.toLocaleString('ko-KR') : ''}" placeholder="예: +50,000" data-type="${type}" data-cat="${c.name}">
-                <span style="font-size:11px; color:var(--muted);">원 (추가/삭감)</span>
+            <div>
+              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">🎯 이번 달만 다르게 쓸 계획</div>
+              <div style="font-size:11px; color:var(--muted); margin-bottom:8px; line-height:1.4;">평소보다 더 쓸 예정이면 <b style="color:var(--danger);">+금액</b>, 적게 쓸 예정이면 <b style="color:var(--ok);">-금액</b>으로 입력하세요.</div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <input type="text" inputmode="numeric" class="sinp sinp-comma-adj" style="width:160px; color:${adjColor}; border-color:${adjVal?adjColor:'var(--border)'}" value="${adjVal ? (adjVal>0?'+':'')+adjVal.toLocaleString('ko-KR') : ''}" placeholder="예: +50,000" data-type="${type}" data-cat="${c.name}">
+                <span style="font-size:12px; color:var(--muted);">원</span>
               </div>
             </div>
           </div>
@@ -2696,13 +2704,19 @@ function renderBudgetSection(type) {
 
     const delBtn=`<button class="cat-del-btn" onclick="delCat('${type}',${i})" title="카테고리 삭제">✕</button>`;
     const typeBtn=isNone
-      ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid #9CA3AF;color:#9CA3AF;background:#F9FAFB">예산없음</span>`
-      : `<button class="brow-typebtn ${isFixed?'fixed':'avg'}" onclick="toggleBudgetType('${type}',${i})">${isFixed?'📌 고정':'📊 평균'}</button>`;
+      ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid #9CA3AF;color:#9CA3AF;background:#F9FAFB">🚫 예산없음</span>`
+      : `<div class="brow-typeseg">
+           <button class="brow-typeseg-btn fixed ${isFixed?'active':''}" onclick="setBudgetType('${type}',${i},'fixed')">📌 고정</button>
+           <button class="brow-typeseg-btn avg ${!isFixed?'active':''}" onclick="setBudgetType('${type}',${i},'avg')">📊 평균</button>
+         </div>`;
+    const hasBudget = !isNone && bud > 0;
+    const badgeStyle = hasBudget ? '' : 'background:transparent;color:var(--muted);font-weight:normal;opacity:.6;';
+    const badgeText  = isNone ? '예산없음' : (bud > 0 ? fmt(bud) : '예산 미입력');
     return `<div class="brow">
       <div class="brow-top" style="margin-bottom:0;">
         <span class="brow-name" style="font-size:14px;">${c.emoji} ${c.name}</span>
         ${typeBtn}
-        <span class="brow-result ${col} budget-badge" data-type="${type}" data-cat="${c.name}" title="당월 확정 예산">${isNone?'-':bud>0?fmt(bud):'미설정'}</span>
+        <span class="brow-result ${col} budget-badge" style="${badgeStyle}" data-type="${type}" data-cat="${c.name}" title="당월 확정 예산">${badgeText}</span>
         ${delBtn}
       </div>
       <div class="brow-fields">${fieldsHtml}</div>
@@ -2872,9 +2886,10 @@ function updCatField(type,i,key,val) {
   save(); renderOv(type); renderSettle(type); renderBudgetSection(type);
 }
 
-function toggleBudgetType(type,i) {
-  const c=cats(type)[i];
-  c.budgetType = c.budgetType==='fixed' ? 'avg' : 'fixed';
+function setBudgetType(type, i, newType) {
+  const c = cats(type)[i];
+  if (c.budgetType === newType) return;
+  c.budgetType = newType;
   resetMonthBudgets(S.month);
   save(); renderOv(type); renderSettle(type); renderBudgetSection(type);
 }
