@@ -422,6 +422,7 @@ details[open].detail-box summary::after { content: " ▲"; }
         <div class="strip" style="background:var(--p)"></div>
         <div class="ctitle">여유자금 <span style="font-size:11px;font-weight:400;color:var(--muted);">· 이번 달 자유롭게 쓸 수 있는 돈</span></div>
         <div class="balmain"><span class="balamt" id="p-amt">₩0</span><span style="font-size:11px;color:var(--muted)" id="p-lbl">잔액</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">잔고 − 전월 카드대금 − 고정 예산</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <div style="font-size:11px;color:var(--muted);white-space:nowrap;text-align:left">
             <div>월초 여유자금</div>
@@ -433,7 +434,6 @@ details[open].detail-box summary::after { content: " ▲"; }
             <div id="p-flex-now" style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--text)">₩0</div>
           </div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">잔고 − 전월 카드대금 − 고정 예산</div>
         <div style="border-top:1px solid var(--border);margin:10px 0"></div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px">계좌 + 현금 잔액</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -657,7 +657,7 @@ details[open].detail-box summary::after { content: " ▲"; }
       <input type="date" class="fi" id="liq-date">
     </div>
     <div class="fg">
-      <label class="fl">계좌 입금</label>
+      <label class="fl">매도한 돈이 들어올 곳</label>
       <div class="tg">
         <button class="tb active" id="pm-liq-account" onclick="setLiqPayment('account')">🏦 체크카드/계좌</button>
         <button class="tb" id="pm-liq-cash" onclick="setLiqPayment('cash')">💵 현금</button>
@@ -771,6 +771,7 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div class="note">JSON 파일로 내보내거나 불러와서 데이터를 안전하게 보관하세요. 앱을 새로 받아도 복원 후 그대로 사용할 수 있습니다.</div>
       <button class="btn-outline" onclick="exportData()">📤 JSON으로 내보내기</button>
       <button class="btn-outline" onclick="document.getElementById('import-file').click()">📥 JSON에서 불러오기</button>
+      <div class="note" style="color:var(--danger);font-size:11px;margin-top:4px;margin-bottom:8px;">⚠️ 불러오기는 현재 데이터를 모두 덮어씁니다. 먼저 내보내기로 백업하세요.</div>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
       <button class="btn-outline danger" onclick="resetData()">🗑 모든 데이터 초기화</button>
     </div>
@@ -856,7 +857,8 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     
     <div class="fg" id="asset-fg" style="display:none; margin-bottom:20px;">
-      <label class="fl">적금 항목</label>
+      <label class="fl">💰 어떤 자산에 넣을까요?</label>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">이 금액이 선택한 자산에 자동으로 적립돼요</div>
       <div class="chips" id="asset-chips"></div>
     </div>
 
@@ -2964,6 +2966,7 @@ function setDirection(dir) {
   document.getElementById('pm-card').style.display = isInc ? 'none' : '';
   if (isInc && mPay==='card') setPayment('account');
   document.getElementById('payment-lbl').textContent = isInc ? '수입 경로' : '결제 수단';
+  document.getElementById('inp-amt').placeholder = isInc ? '얼마를 받으셨나요?' : '얼마를 쓰셨나요?';
   if (!_editId) mCat=null;
   // 카테고리 칩 재렌더
   const selCls = mType==='personal'?'sp':'sj';
@@ -3245,7 +3248,7 @@ function updateLiqInfo() {
       <span style="font-family:Arial,sans-serif">${fmt(r.balance)} → <b style="color:${afterAsset<0?'var(--danger)':'var(--text)'}">${fmt(afterAsset)}</b></span>
     </div>
     <div style="display:flex;justify-content:space-between">
-      <span>${payLabel} 수입 기록</span>
+      <span>${payLabel} 수입으로 기록됩니다</span>
       <span style="font-family:Arial,sans-serif;color:var(--ok)">+${fmt(amt)}</span>
     </div>`;
 }
