@@ -15,14 +15,16 @@
 
 ## 1. 리포지토리 개요
 
-리포지토리는 **두 개의 독립적인 영역**이 공존:
+리포지토리는 **두 개의 배포 경로**가 `html/`을 단일 소스로 공유:
 
-| 영역 | 위치 | 상태 | 사양서 |
-|------|------|------|--------|
-| 정적 PWA | `html/` | **운영 중** (Vercel 자동 배포) | [`spec.md`](./spec.md) |
-| React + AiT SDK | `src/` | 데모/템플릿 단계 | [`sdk-spec.md`](./sdk-spec.md) |
+| 배포 경로 | 소스 | 방식 | 사양서 |
+|-----------|------|------|--------|
+| Vercel (웹 PWA) | `html/` | 정적 서빙 (`buildCommand: ""`) | [`spec.md`](./spec.md) |
+| 앱인토스 (AiT) | `html/` | Vite 빌드 → `dist/` → `npm run deploy` | [`sdk-spec.md`](./sdk-spec.md) |
 
-**두 영역의 관계**: 루트 `vercel.json` 설정에 따라 **현재는 `html/`만 배포됨**. SDK는 `npm run deploy`로 별도 AiT 플랫폼에 배포 가능.
+**두 배포의 공통 소스**: `html/index.html`과 `html/` 에셋이 **유일한 진실 소스**. Vercel은 직접 서빙, AiT는 `vite build`(root: html/)로 번들 후 `ait deploy`.  
+`src/`의 React 카운터 데모는 현재 빌드에서 사용되지 않음(추후 정리 예정).  
+`npm run deploy`(= `ait deploy`)는 토스 AiT 계정 인증 필요 — 사용자가 직접 실행해야 함.
 
 > **현재 PWA는 외부 서버 연동 없는 100% 로컬 전용 앱입니다.** 과거에는 Google OAuth(Supabase) + Google Drive 백업이 있었으나 2026-05-21 제거됨 (§ 7.3 참조).
 
@@ -37,15 +39,16 @@
 4. **기능 추가/변경 시 `docs/spec.md` 해당 섹션을 동시 업데이트**
 5. **버그/오류 발생 시 본 문서 §7에 기록**
 
-### 2.2 SDK(`src/`) 작업 시
-1. `src/` 내 React 컴포넌트/로직 수정
-2. `npm run dev` (= `granite dev`)로 로컬 검증 — `localhost:5173`
-3. `npm run lint`로 ESLint 통과 확인
-4. `npm run build` (= `ait build`)로 빌드 성공 확인 — `dist/` + `check-mate.ait` 생성
-5. feature 브랜치에 push → PR 생성 → main 머지
-6. **AiT 배포는 `npm run deploy` (= `ait deploy`)로 수동 — Vercel 자동 배포되지 않음**
-7. **API/컴포넌트 추가 시 `docs/sdk-spec.md` 해당 섹션 동시 업데이트**
-8. **버그/오류 발생 시 본 문서 §7에 기록**
+### 2.2 AiT 빌드 작업 시
+1. `html/` 내 파일을 수정 (Vercel과 동일 소스)
+2. `npm run dev` (= `granite dev`)로 AiT 환경 로컬 검증 — `localhost:5173`
+3. `npm run build` (= `ait build` → `vite build`)로 `dist/` + `check-mate.ait` 생성 확인  
+   - `html/index.html` → `dist/index.html`  
+   - `sw.js`, `manifest.json`, 아이콘 등이 미해싱 평문 이름으로 `dist/`에 존재하는지 확인
+4. feature 브랜치에 push → PR 생성 → main 머지
+5. **AiT 배포는 `npm run deploy` (= `ait deploy`)로 수동** — 토스 AiT 계정 인증 필요, Vercel 자동 배포 안 됨
+6. **설정 변경 시 `docs/sdk-spec.md` 해당 섹션 동시 업데이트**
+7. **버그/오류 발생 시 본 문서 §7에 기록**
 
 ---
 
@@ -57,7 +60,7 @@
 - ❌ **루트 `vercel.json`의 `buildCommand`를 `npm run build` 등으로 변경 금지** — Vite가 작동하여 `dist/` 생성, 그러나 `html/` 자산이 아닌 React 데모만 배포됨 (마이그레이션 완료 전까지)
 - ❌ **Google OAuth, Supabase, Google Drive API, Firebase 등 외부 인증/저장 서비스 재도입 금지** — PWA는 로컬 전용으로 운영 중. 재도입 시 반드시 별도 의사결정 PR + spec.md/CLAUDE.md 사전 갱신
 - ❌ **Service Worker(`sw.js`) 캐시 키 무단 변경 금지** — 사용자 기기에 잔여 캐시 충돌 발생. 변경 시 반드시 캐시 버전 숫자 증가
-- ❌ **`public/`에 중복 PWA 자산 추가 금지** — `public/`은 Vite/SDK용. Vercel 배포는 `html/`만 사용. `html/`만 단일 진실로 유지
+- ❌ **`html/` 외부에 PWA 자산 복제 금지** — `html/`이 Vercel·AiT 공통 단일 소스. 루트나 `public/`에 복사본 두지 말 것 (구 `public/`은 삭제됨, 재생성 금지)
 - ❌ **로컬스토리지 키 이름 변경 금지** — 기존 사용자의 데이터가 유실됨. 스키마 마이그레이션이 필요한 경우 마이그레이션 코드 작성 후 수정
 
 ### 3.2 SDK / AiT 관련
