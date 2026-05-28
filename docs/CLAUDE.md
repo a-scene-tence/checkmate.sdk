@@ -26,7 +26,8 @@
 `src/`의 React 카운터 데모는 현재 빌드에서 사용되지 않음(추후 정리 예정).  
 `npm run deploy`(= `ait deploy`)는 토스 AiT 계정 인증 필요 — 사용자가 직접 실행해야 함.
 
-> **현재 PWA는 외부 서버 연동 없는 100% 로컬 전용 앱입니다.** 과거에는 Google OAuth(Supabase) + Google Drive 백업이 있었으나 2026-05-21 제거됨 (§ 7.3 참조).
+> **`main` 브랜치 PWA는 외부 서버 연동 없는 100% 로컬 전용 앱입니다.** 과거에는 Google OAuth(Supabase) + Google Drive 백업이 있었으나 2026-05-21 제거됨 (§ 7.3 참조).
+> **`feature/google-sync` 브랜치**는 GIS OAuth + Google Drive 자동 동기화가 추가된 개인용 버전. AiT 빌드는 항상 `main` 기준.
 
 ---
 
@@ -58,7 +59,7 @@
 - ❌ **`html/vercel.json` 재생성 금지** — 라우팅 설정은 루트 `vercel.json` 단일 진실. 중복 시 Vercel 동작 예측 불가
 - ❌ **루트 `vercel.json`의 `outputDirectory`를 `html` 외 값으로 변경 금지** — 현재 PWA 배포가 즉시 중단됨
 - ❌ **루트 `vercel.json`의 `buildCommand`를 `npm run build` 등으로 변경 금지** — Vite가 작동하여 `dist/` 생성, 그러나 `html/` 자산이 아닌 React 데모만 배포됨 (마이그레이션 완료 전까지)
-- ❌ **Google OAuth, Supabase, Google Drive API, Firebase 등 외부 인증/저장 서비스 재도입 금지** — PWA는 로컬 전용으로 운영 중. 재도입 시 반드시 별도 의사결정 PR + spec.md/CLAUDE.md 사전 갱신
+- ❌ **`main` 브랜치에 Google OAuth, Supabase, Google Drive API, Firebase 등 외부 인증/저장 서비스 추가 금지** — main은 AiT 빌드 소스, 로컬 전용 유지. `feature/google-sync` 브랜치는 GIS+Drive 허용 (§ 7.6 참조)
 - ❌ **Service Worker(`sw.js`) 캐시 키 무단 변경 금지** — 사용자 기기에 잔여 캐시 충돌 발생. 변경 시 반드시 캐시 버전 숫자 증가
 - ❌ **`html/` 외부에 PWA 자산 복제 금지** — `html/`이 Vercel·AiT 공통 단일 소스. 루트나 `public/`에 복사본 두지 말 것 (구 `public/`은 삭제됨, 재생성 금지)
 - ❌ **로컬스토리지 키 이름 변경 금지** — 기존 사용자의 데이터가 유실됨. 스키마 마이그레이션이 필요한 경우 마이그레이션 코드 작성 후 수정
@@ -273,6 +274,32 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 - ✅ 마법사는 **최소한의 필수 입력**만 받고, 나머지는 본 화면(설정 탭)에서 시각적 가이드로 안내
 - ✅ "처음 사용자도 이해할 수 있게" = 라벨을 자연어로 풀어쓰기 + 클릭 가능 요소를 명확한 토글 UI로 표현
 - ✅ 즉각적 피드백(여유자금 미리보기, 거래 모달 잔고 미리보기)이 사용자에게 시스템 동작을 학습시킴
+
+---
+
+### 7.6 [2026-05-28] Google Drive 동기화 재도입 (`feature/google-sync`)
+
+**상황** (버그 아닌 의사결정 기록):
+- 앱인토스 게시 완료 후, 개인 기기(모바일/아이패드 등) 간 데이터 동기화 요구
+- 사용자가 명시적으로 Google 로그인 + Drive 동기화 재도입 요청 → §3.1 제약 해제
+
+**결정**:
+- `main`은 AiT 빌드 소스이자 로컬 전용 PWA로 유지
+- `feature/google-sync` 브랜치에서만 Google 동기화 기능 관리
+- Supabase 제거 → **GIS (Google Identity Services) 단독** OAuth로 단순화
+- Google Drive appDataFolder에 `checkmate_backup.json` 단일 파일로 동기화
+
+**수행**:
+- `html/index.html` `<head>`에 GIS CDN 스크립트 추가 (`async defer`)
+- JS 상수: `GDRIVE_CLIENT_ID`, `GDRIVE_SCOPE`, `GDRIVE_FILE_NAME`, `GAUTH_STORAGE_KEY`
+- 함수: `initGoogleAuth`, `signInWithGoogle`, `signOutGoogle`, `driveLoad`, `driveSave`, `scheduleDriveSave`, `updateSyncUI`
+- `save()` 훅: `_driveToken` 있으면 30초 debounce 후 Drive 자동 저장
+- 설정 탭 "Google 동기화" 카드 추가 (로그인/연결됨 뷰 토글)
+- `html/sw.js` CACHE_NAME v3 → v4
+
+**사용자 직접 수행 필요**:
+- Google Cloud 콘솔 → OAuth Client ID `931715443841-...` → Authorized JS origins에 Vercel 도메인 추가
+- Vercel Production Branch를 `feature/google-sync`로 전환 (선택)
 
 ---
 
