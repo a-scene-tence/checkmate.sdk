@@ -59,7 +59,7 @@
 - ❌ **`html/vercel.json` 재생성 금지** — 라우팅 설정은 루트 `vercel.json` 단일 진실. 중복 시 Vercel 동작 예측 불가
 - ❌ **루트 `vercel.json`의 `outputDirectory`를 `html` 외 값으로 변경 금지** — 현재 PWA 배포가 즉시 중단됨
 - ❌ **루트 `vercel.json`의 `buildCommand`를 `npm run build` 등으로 변경 금지** — Vite가 작동하여 `dist/` 생성, 그러나 `html/` 자산이 아닌 React 데모만 배포됨 (마이그레이션 완료 전까지)
-- ❌ **`main` 브랜치에 Google OAuth, Supabase, Google Drive API, Firebase 등 외부 인증/저장 서비스 추가 금지** — main은 AiT 빌드 소스, 로컬 전용 유지. `feature/google-sync` 브랜치는 GIS+Drive 허용 (§ 7.6 참조)
+- 🔄 **`main` 브랜치는 이제 Google Drive 동기화 기능 포함** (2026-05-29) — GIS OAuth + Google Drive appDataFolder. AiT 배포 시 Google Client ID 설정 필수
 - ❌ **Service Worker(`sw.js`) 캐시 키 무단 변경 금지** — 사용자 기기에 잔여 캐시 충돌 발생. 변경 시 반드시 캐시 버전 숫자 증가
 - ❌ **`html/` 외부에 PWA 자산 복제 금지** — `html/`이 Vercel·AiT 공통 단일 소스. 루트나 `public/`에 복사본 두지 말 것 (구 `public/`은 삭제됨, 재생성 금지)
 - ❌ **로컬스토리지 키 이름 변경 금지** — 기존 사용자의 데이터가 유실됨. 스키마 마이그레이션이 필요한 경우 마이그레이션 코드 작성 후 수정
