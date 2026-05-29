@@ -298,7 +298,7 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 - `html/sw.js` CACHE_NAME v3 → v4
 
 **사용자 직접 수행 필요**:
-- Google Cloud 콘솔 → OAuth Client ID `931715443841-...` → Authorized JS origins에 Vercel 도메인 추가
+- Google Cloud 콘솔 → OAuth Client ID `713865118042-...` → Authorized JS origins에 Vercel 도메인 추가
 - Vercel Production Branch를 `feature/google-sync`로 전환 (선택)
 
 ---
