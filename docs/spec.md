@@ -27,13 +27,14 @@
 
 - **프론트엔드**: Vanilla HTML/CSS/JavaScript (빌드 도구 없음)
 - **PWA**: Service Worker + `manifest.json`
-- **인증**: 없음 (로컬 전용)
-- **데이터 저장**: 브라우저 로컬스토리지만 사용 (외부 서버 연동 없음)
-- **백업**: 사용자가 수동으로 JSON 파일 내보내기/복원
-- **외부 의존성** (CDN 단수):
+- **인증**: Google Identity Services (GIS) OAuth 2.0 — `feature/google-sync` 브랜치 한정
+- **데이터 저장**: 브라우저 로컬스토리지 + Google Drive appDataFolder 동기화 (`feature/google-sync` 한정)
+- **백업**: Google Drive 자동 동기화 (30초 debounce) + 수동 JSON 내보내기/복원
+- **외부 의존성** (CDN):
   - NanumSquareNeo 웹폰트 (`cdn.jsdelivr.net/gh/moonspam/NanumSquareNeo`)
+  - Google Identity Services (`accounts.google.com/gsi/client`) — `feature/google-sync` 한정
 
-> 📜 이전에는 Supabase OAuth(Google) + Google Drive 백업이 있었으나, 2026-05-21에 완전 제거됨. 자세한 사유는 [`CLAUDE.md`](./CLAUDE.md) § 7.3 참조.
+> 📜 이전에는 Supabase OAuth(Google) + Google Drive 백업이 있었으나, 2026-05-21에 완전 제거됨(§ 7.3). 이후 2026-05-28에 Supabase 없이 GIS 직접 연동으로 재도입 — `feature/google-sync` 브랜치 전용. `main` 브랜치는 여전히 로컬 전용.
 
 ---
 
@@ -96,16 +97,23 @@ Vercel 배포 설정:
 | 설정 (개인) | ①시작 잔고 ②카테고리 예산 ③자산 ④백업/복원 |
 | 설정 (공동) | ①공동 시작 잔고 ②공동 카테고리 예산 |
 
-### 5.5 인증
-- **없음**. 별도 계정/로그인 과정 없이 즉시 사용 가능.
-- 모든 데이터는 기기 로컬에만 저장되므로 계정 식별 불필요.
+### 5.5 인증 (`feature/google-sync` 브랜치)
+- **Google Identity Services (GIS)** OAuth 2.0 — `accounts.google.com/gsi/client` CDN
+- 설정 탭 → "Google 동기화" 카드 → "Google로 로그인" 버튼
+- 인증 후 이름·이메일·프로필 사진 표시
+- 로그인 상태는 `hb5_gauth` 키(localStorage)에 토큰 + 만료일시 저장 → 재방문 시 자동 복원
+- Supabase 미사용 — GIS 단독으로 OAuth 토큰 관리
 
 ### 5.6 백업/복원
-- **클라우드 동기화 없음.** 자동 동기화 기능 제거됨.
-- **방식**: 설정 탭 → "데이터 백업/복원"
+- **Google Drive 자동 동기화** (`feature/google-sync` 한정):
+  - Google 로그인 후 데이터 변경 시 30초 debounce 후 Drive 자동 저장
+  - Drive appDataFolder의 `checkmate_backup.json` 단일 파일 — 사용자 Drive 목록에 노출 안 됨
+  - 여러 기기에서 동일 계정 로그인 시 데이터 공유
+  - 설정 탭 → "🔄 지금 동기화" 버튼으로 수동 동기화 가능
+- **로컬 JSON 백업/복원** (공통):
+  - 설정 탭 → "데이터 백업/복원" 카드
   - 내보내기: 전체 데이터 JSON 파일 다운로드
   - 복원하기: JSON 파일 업로드 → 데이터 복원
-- **기기 이전 시**: JSON 파일을 새 기기에서 불러오면 동일한 데이터로 복구
 
 ---
 
@@ -170,6 +178,7 @@ Vercel 배포 설정:
 | 2026-05-23 | UX 온보딩 1단계: 자산 Empty state, 결제수단 2-열 시각화, 거래 실시간 잔고 미리보기, 설정 탭 카드 번호화·여유자금 미리보기·신규 가이드, 카테고리 행 세그먼트 컨트롤·자연어 고급 설정 | #6 |
 | 2026-05-23 | UX 온보딩 2단계: 요약 탭 여유자금 부제·계산식 힌트, 결산 탭 순지출·남음 라벨 평이화 + 설명 note, 자산 카드 현재 잔액 라벨, 내역 탭 빈 상태 CTA 보완·필터 라벨 추가 | #7 |
 | 2026-05-23 | UX 온보딩 3단계: 수입 모드 금액 placeholder 모순 수정, 적금 항목 라벨 + 자산 적립 안내, 매도 목적지 라벨 명확화, 백업 복원 덮어쓰기 경고 가시화, 요약 탭 계산식 힌트 위치 조정 | #8 |
+| 2026-05-28 | Google 동기화 재도입 (`feature/google-sync`): GIS OAuth 2.0 + Google Drive appDataFolder 자동 동기화, Supabase 미사용, main 브랜치와 분리 관리 | — |
 
 ---
 
