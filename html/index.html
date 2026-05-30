@@ -771,7 +771,7 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div id="gsync-connected-view" style="display:none">
         <div id="gsync-user-info"></div>
         <div id="gsync-last-sync"></div>
-        <button class="btn-outline" onclick="driveSave()">☁️ 현재 작업을 구글에 저장</button>
+        <button class="btn-outline" onclick="driveSave(true)">☁️ 현재 작업을 구글에 저장</button>
         <button class="btn-outline" onclick="driveLoad()">📂 구글에서 불러오기</button>
         <button class="btn-outline danger" onclick="signOutGoogle()">로그아웃</button>
       </div>
@@ -3324,6 +3324,10 @@ function initGoogleAuth() {
     callback: async (resp) => {
       if (resp.error) { showToast('Google 로그인 실패: ' + resp.error, 'error'); return; }
       _driveToken = resp.access_token;
+      // Drive 권한(appdata)이 실제로 부여됐는지 확인 — 미부여 시 동기화가 403으로 실패
+      if ((resp.scope || '').indexOf('drive.appdata') === -1) {
+        showToast('Drive 접근 권한이 허용되지 않았습니다. 다시 로그인 후 "Drive" 권한에 체크해 주세요.', 'error');
+      }
       const expiresAt = Date.now() + (resp.expires_in - 60) * 1000;
       try {
         const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -3365,12 +3369,21 @@ function signOutGoogle() {
   showToast('로그아웃 되었습니다', 'info');
 }
 
+// Google API 응답에서 실제 에러 사유를 추출 (accessNotConfigured / insufficientPermissions 등)
+async function gapiErr(r, label) {
+  let detail = '';
+  try { const j = await r.json(); if (j && j.error && j.error.message) detail = j.error.message; } catch(e) {}
+  const e = new Error(label + ' (' + r.status + ')' + (detail ? ': ' + detail : ''));
+  e.status = r.status;
+  return e;
+}
+
 async function driveFindFile() {
   const r = await fetch(
     `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${GDRIVE_FILE_NAME}'&fields=files(id)`,
     { headers: { Authorization: 'Bearer ' + _driveToken } }
   );
-  if (!r.ok) throw new Error('Drive 검색 실패 (' + r.status + ')');
+  if (!r.ok) throw await gapiErr(r, 'Drive 검색 실패');
   const data = await r.json();
   return (data.files && data.files[0]) ? data.files[0].id : null;
 }
@@ -3384,7 +3397,7 @@ async function driveLoad() {
       `https://www.googleapis.com/drive/v3/files/${_driveFileId}?alt=media`,
       { headers: { Authorization: 'Bearer ' + _driveToken } }
     );
-    if (!r.ok) throw new Error('다운로드 실패 (' + r.status + ')');
+    if (!r.ok) throw await gapiErr(r, '다운로드 실패');
     const data = await r.json();
     if (!data.txs) throw new Error('유효하지 않은 데이터 형식');
     S = data;
@@ -3398,7 +3411,7 @@ async function driveLoad() {
   }
 }
 
-async function driveSave() {
+async function driveSave(manual) {
   if (!_driveToken) return;
   try {
     _driveFileId = _driveFileId || await driveFindFile();
@@ -3417,19 +3430,21 @@ async function driveSave() {
       headers: { Authorization: 'Bearer ' + _driveToken },
       body: form
     });
-    if (!r.ok) throw new Error('업로드 실패 (' + r.status + ')');
+    if (!r.ok) throw await gapiErr(r, '업로드 실패');
     const file = await r.json();
     _driveFileId = file.id;
     const now = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
     updateSyncUI(now);
+    if (manual) showToast('구글에 저장했습니다', 'success');
   } catch(e) {
     console.warn('Drive 저장 오류:', e.message);
+    if (manual) showToast('저장 실패: ' + e.message, 'error');
   }
 }
 
 function scheduleDriveSave() {
   if (_driveSaveTimer) clearTimeout(_driveSaveTimer);
-  _driveSaveTimer = setTimeout(driveSave, 30000);
+  _driveSaveTimer = setTimeout(() => driveSave(false), 30000);
 }
 
 function updateSyncUI(lastSyncTime) {
