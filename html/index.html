@@ -713,6 +713,20 @@ details[open].detail-box summary::after { content: " ▲"; }
 
   <!-- 개인 설정 -->
   <div id="set-personal">
+    <div class="card" id="google-sync-card">
+      <div class="ctitle">Google 동기화</div>
+      <div id="gsync-login-view">
+        <div class="note">구글 계정으로 로그인하면 여러 기기에서 데이터를 자동으로 동기화합니다.</div>
+        <button class="btn-outline" style="border-color:var(--p);color:var(--p);" onclick="signInWithGoogle()">🔑 Google로 로그인</button>
+      </div>
+      <div id="gsync-connected-view" style="display:none">
+        <div id="gsync-user-info"></div>
+        <div id="gsync-last-sync"></div>
+        <button class="btn-outline" onclick="driveSave(true)">☁️ 현재 작업을 구글에 저장</button>
+        <button class="btn-outline" onclick="driveLoad()">📂 구글에서 불러오기</button>
+        <button class="btn-outline danger" onclick="signOutGoogle()">로그아웃</button>
+      </div>
+    </div>
     <div class="card" id="set-guide" style="background:var(--plt);border-left:4px solid var(--p);display:none;">
       <div class="ctitle" style="color:var(--p);">✨ 처음이라면 이 순서대로</div>
       <div class="note" style="line-height:1.8;margin-bottom:0;">
@@ -761,20 +775,6 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div class="ctitle">3️⃣ 자산 (코인·주식·적금)</div>
       <div class="note">월초 잔액을 직접 입력하거나, 비워두면 전월 말 잔액이 자동 이월됩니다. 이번 달 지출 내역의 적금 항목이 자동 합산됩니다.</div>
       <div id="set-assets"></div>
-    </div>
-    <div class="card" id="google-sync-card">
-      <div class="ctitle">Google 동기화</div>
-      <div id="gsync-login-view">
-        <div class="note">구글 계정으로 로그인하면 여러 기기에서 데이터를 자동으로 동기화합니다.</div>
-        <button class="btn-outline" style="border-color:var(--p);color:var(--p);" onclick="signInWithGoogle()">🔑 Google로 로그인</button>
-      </div>
-      <div id="gsync-connected-view" style="display:none">
-        <div id="gsync-user-info"></div>
-        <div id="gsync-last-sync"></div>
-        <button class="btn-outline" onclick="driveSave(true)">☁️ 현재 작업을 구글에 저장</button>
-        <button class="btn-outline" onclick="driveLoad()">📂 구글에서 불러오기</button>
-        <button class="btn-outline danger" onclick="signOutGoogle()">로그아웃</button>
-      </div>
     </div>
     <div class="card" style="margin-bottom:80px">
       <div class="ctitle">데이터 백업 / 복원</div>
@@ -3339,7 +3339,8 @@ function initGoogleAuth() {
         access_token: _driveToken, expires_at: expiresAt, user: _driveUser
       }));
       updateSyncUI();
-      await driveLoad();
+      // 로컬 데이터 우선 — Drive에서 자동으로 덮어쓰지 않음.
+      // 불러오기는 사용자가 "구글에서 불러오기" 버튼으로 명시 실행.
     }
   });
   // 저장된 토큰 복원
@@ -3349,7 +3350,7 @@ function initGoogleAuth() {
       _driveToken = saved.access_token;
       _driveUser = saved.user || {};
       updateSyncUI();
-      driveLoad().catch(() => {});
+      // 로컬 우선 — 복원 시 Drive 자동 로드 안 함
     }
   } catch(e) {}
 }
