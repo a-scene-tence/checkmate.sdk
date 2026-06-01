@@ -374,6 +374,18 @@ details[open].detail-box summary::after { content: " ▲"; }
 #cm-modal-ok{background:var(--p,#3182F6);color:white;}
 #cm-modal-ok.danger{background:#ef4444;}
 
+/* ── 텍스트 복사/붙여넣기 모달 ── */
+#text-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;padding:24px;}
+#text-modal-overlay.open{display:flex;}
+#text-modal-box{background:var(--surface,white);border-radius:16px;width:100%;max-width:360px;padding:24px 20px 16px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+#text-modal-title{font-size:16px;font-weight:800;color:var(--text,#111);margin-bottom:6px;}
+#text-modal-note{font-size:12px;color:var(--muted,#666);margin-bottom:10px;line-height:1.5;}
+#text-modal-area{width:100%;height:160px;border:1px solid var(--s2,#ddd);border-radius:10px;padding:10px;font-size:11px;font-family:monospace;line-height:1.5;resize:none;background:var(--s1,#f8f9fa);color:var(--text,#111);box-sizing:border-box;}
+#text-modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+#text-modal-btns button{padding:10px 18px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;min-width:72px;}
+#text-modal-cancel{background:var(--s2,#f1f3f5);color:var(--muted,#555);}
+#text-modal-action{background:var(--p,#3182F6);color:white;}
+
 </style>
 </head>
 <body>
@@ -763,10 +775,11 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     <div class="card" style="margin-bottom:80px">
       <div class="ctitle">데이터 백업 / 복원</div>
-      <div class="note">JSON 파일로 내보내거나 불러와서 데이터를 안전하게 보관하세요. 앱을 새로 받아도 복원 후 그대로 사용할 수 있습니다.</div>
+      <div class="note">내보내기를 누르면 파일로 공유하거나 텍스트로 복사할 수 있어요. 파일 불러오기 또는 복사한 텍스트를 붙여넣어 복원하세요.</div>
       <button class="btn-outline" onclick="exportData()">📤 JSON으로 내보내기</button>
-      <button class="btn-outline" onclick="document.getElementById('import-file').click()">📥 JSON에서 불러오기</button>
-      <div class="note" style="color:var(--danger);font-size:11px;margin-top:4px;margin-bottom:8px;">⚠️ 불러오기는 현재 데이터를 모두 덮어씁니다. 먼저 내보내기로 백업하세요.</div>
+      <button class="btn-outline" onclick="document.getElementById('import-file').click()">📥 JSON 파일에서 불러오기</button>
+      <button class="btn-outline" onclick="openRestoreModal()">📋 텍스트로 복원</button>
+      <div class="note" style="color:var(--danger);font-size:11px;margin-top:4px;margin-bottom:8px;">⚠️ 불러오기·복원은 현재 데이터를 모두 덮어씁니다. 먼저 내보내기로 백업하세요.</div>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
       <button class="btn-outline danger" onclick="resetData()">🗑 모든 데이터 초기화</button>
     </div>
@@ -2906,34 +2919,117 @@ function setBudgetType(type, i, newType) {
 // ═══════════════════════════════════════════════
 //  BACKUP / RESTORE
 // ═══════════════════════════════════════════════
-function exportData() {
-  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  const dateStr=new Date().toISOString().slice(0,10);
-  a.href=url; a.download=`가계부_백업_${dateStr}.json`;
-  a.click(); URL.revokeObjectURL(url);
+
+function isDesktopBrowser() {
+  return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch(e) {}
+  // execCommand 폴백 (구형 WebView)
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch(e) { return false; }
+}
+
+function openTextModal(title, text, isReadonly) {
+  const overlay = document.getElementById('text-modal-overlay');
+  const area = document.getElementById('text-modal-area');
+  const actionBtn = document.getElementById('text-modal-action');
+  document.getElementById('text-modal-title').textContent = title;
+  if (isReadonly) {
+    document.getElementById('text-modal-note').textContent = '아래 내용을 복사해서 메모·이메일 등에 붙여넣어 보관하세요.';
+    area.value = text;
+    area.readOnly = true;
+    actionBtn.textContent = '복사하기';
+    actionBtn.onclick = async () => {
+      const ok = await copyText(text);
+      showToast(ok ? '백업 내용을 복사했어요. 메모·메일에 붙여넣어 보관하세요.' : '복사에 실패했습니다. 텍스트를 직접 선택해 복사하세요.', ok ? 'success' : 'error', 3500);
+    };
+  } else {
+    document.getElementById('text-modal-note').textContent = '내보낸 백업 텍스트를 아래에 붙여넣고 복원하기를 누르세요.';
+    area.value = '';
+    area.readOnly = false;
+    actionBtn.textContent = '복원하기';
+    actionBtn.onclick = async () => {
+      const val = area.value.trim();
+      if (!val) { showToast('텍스트를 붙여넣어 주세요.', 'error'); return; }
+      if (!await cmConfirm('현재 데이터가 모두 덮어씌워집니다.\n복원할까요?', '백업 복원')) return;
+      if (restoreFromJSON(val)) {
+        overlay.classList.remove('open');
+      }
+    };
+  }
+  overlay.classList.add('open');
+}
+
+function openRestoreModal() {
+  openTextModal('텍스트로 복원', '', false);
+}
+
+function restoreFromJSON(text) {
+  let data;
+  try { data = JSON.parse(text); }
+  catch(e) { showToast('JSON 형식이 올바르지 않습니다','error'); return false; }
+  if (!data.txs) { showToast('올바른 백업 파일이 아닙니다','error'); return false; }
+  if (!data.pCats) data.pCats = defaultState().pCats;
+  if (!data.jCats) data.jCats = defaultState().jCats;
+  if (!data.ms) data.ms = {};
+  if (!data.assetLinks) data.assetLinks = {};
+  if (!data.month) data.month = new Date().toISOString().slice(0,7);
+  S = data; save(); render();
+  showToast('데이터를 성공적으로 불러왔습니다','success');
+  return true;
+}
+
+async function exportData() {
+  const json = JSON.stringify(S, null, 2);
+  const fname = `가계부_백업_${todayStr()}.json`;
+
+  // 1) 네이티브 공유 시트 (모바일·WebView): 파일앱 저장·메신저 전송 등
+  try {
+    if (navigator.canShare) {
+      const file = new File([json], fname, { type: 'application/json' });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: '체크메이트 백업' });
+        return;
+      }
+    }
+  } catch(err) {
+    if (err && err.name === 'AbortError') return; // 사용자가 공유 취소
+    // 그 외 오류는 폴백으로 진행
+  }
+
+  // 2) 데스크톱 브라우저: 파일 다운로드
+  if (isDesktopBrowser()) {
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fname; a.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+
+  // 3) 폴백: 텍스트 복사 모달 (공유 미지원 WebView)
+  openTextModal('백업 데이터 복사', json, true);
 }
 
 async function importData(e) {
   const file=e.target.files[0]; if(!file) return;
   if(!await cmConfirm(`백업 파일(${file.name})을 불러올까요?\n현재 데이터는 덮어씌워집니다.`, '백업 복원')) { e.target.value=''; return; }
   const reader=new FileReader();
-  reader.onload=ev=>{
-    try {
-      const data=JSON.parse(ev.target.result);
-      if(!data.txs) { showToast('올바른 백업 파일이 아닙니다','error'); return; }
-      // 누락 필드 보완
-      if(!data.pCats) data.pCats = defaultState().pCats;
-      if(!data.jCats) data.jCats = defaultState().jCats;
-      if(!data.ms) data.ms = {};
-      if(!data.assetLinks) data.assetLinks = {};
-      if(!data.month) data.month = new Date().toISOString().slice(0,7);
-      S = data;
-      save(); render();
-      showToast('데이터를 성공적으로 불러왔습니다','success');
-    } catch(err) { showToast('파일을 읽는 중 오류가 발생했습니다','error'); }
-  };
+  reader.onload=ev=>{ restoreFromJSON(ev.target.result); };
+  reader.onerror=()=>{ showToast('파일을 읽는 중 오류가 발생했습니다','error'); };
   reader.readAsText(file);
   e.target.value='';
 }
@@ -3608,6 +3704,19 @@ if ('serviceWorker' in navigator) {
     <div id="cm-modal-btns">
       <button id="cm-modal-cancel" onclick="_cmModalResolve(false)">취소</button>
       <button id="cm-modal-ok" onclick="_cmModalResolve(true)">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 텍스트 복사/붙여넣기 모달 -->
+<div id="text-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="text-modal-box">
+    <div id="text-modal-title"></div>
+    <div id="text-modal-note"></div>
+    <textarea id="text-modal-area" spellcheck="false"></textarea>
+    <div id="text-modal-btns">
+      <button id="text-modal-cancel" onclick="document.getElementById('text-modal-overlay').classList.remove('open')">닫기</button>
+      <button id="text-modal-action"></button>
     </div>
   </div>
 </div>

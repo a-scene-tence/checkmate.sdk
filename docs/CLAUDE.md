@@ -276,6 +276,30 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.6 [2026-06-01] 앱인토스 WebView에서 JSON 내보내기 미동작
+
+**증상**:
+- 앱인토스(AiT) 게시 앱에서 설정 → "JSON으로 내보내기" 버튼을 눌러도 아무 일도 일어나지 않음
+
+**원인**:
+- `exportData()`가 `Blob` + `URL.createObjectURL()` + `<a download>.click()` 방식을 사용
+- 토스 RN WebView는 `download` 속성 및 `blob:` URL 다운로드를 지원하지 않아 클릭이 조용히 실패
+
+**해결**:
+1. `exportData()`를 환경 인지형으로 재작성:
+   - 모바일/WebView: `navigator.share({ files: [...] })`로 네이티브 공유 시트 우선
+   - 데스크톱: 기존 파일 다운로드 유지
+   - 폴백(공유 미지원): 텍스트 복사 모달(`openTextModal`)
+2. 복사 백업을 되살릴 수 있도록 `📋 텍스트로 복원` 버튼 + `openRestoreModal()` 추가
+3. 복원 로직을 `restoreFromJSON(text)` 헬퍼로 추출하여 파일 불러오기·텍스트 복원 공유
+
+**예방책**:
+- ⛔️ 모바일/WebView 대상 기능에서 `<a download>` + `blob:` URL 방식 사용 금지
+- ✅ 파일 저장·다운로드가 필요한 기능은 `navigator.share({ files })` + 데스크톱 폴백 + 텍스트 복사 순서로 분기 구현
+- ✅ AiT 배포 전 모바일 UA 에뮬레이션 또는 실기기에서 내보내기·복원 왕복 테스트 필수
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
