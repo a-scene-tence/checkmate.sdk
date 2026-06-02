@@ -1289,30 +1289,40 @@ function bsBindSwipe(mo) {
   var mh = mo.querySelector('.mh');
   if (!mb || mb._swipeBound) return;
   mb._swipeBound = true;
-  var startY = 0, curY = 0, dragging = false;
+  var startY = 0, curY = 0, dragging = false, armed = false;
   function onStart(e) {
     var touch = e.touches ? e.touches[0] : e;
-    var rect = mb.getBoundingClientRect();
-    if (touch.clientY - rect.top > 48 && !mh.contains(e.target)) return;
-    startY = touch.clientY; curY = 0; dragging = true;
-    mb.style.transition = 'none';
+    // 손잡이를 잡았거나 콘텐츠가 최상단일 때만 '아래로 당겨 닫기' 준비
+    armed = mh.contains(e.target) || mb.scrollTop <= 0;
+    startY = touch.clientY; curY = 0; dragging = false;
   }
   function onMove(e) {
-    if (!dragging) return;
+    if (!armed) return;
     var touch = e.touches ? e.touches[0] : e;
-    curY = Math.max(0, touch.clientY - startY);
+    var dy = touch.clientY - startY;
+    if (dy <= 0) {                          // 위로 드래그 → 스크롤에 양보
+      if (dragging) { dragging = false; mb.style.transition = ''; mb.style.transform = ''; }
+      curY = 0;
+      return;
+    }
+    if (!dragging && mb.scrollTop > 0) { armed = false; return; } // 그새 스크롤됐으면 중단
+    dragging = true;
+    curY = dy;
+    mb.style.transition = 'none';
     mb.style.transform = 'translateY(' + curY + 'px)';
   }
   function onEnd() {
+    armed = false;
     if (!dragging) return;
     dragging = false; mb.style.transition = '';
-    if (curY > 100) { bsClose(mo.id); }
+    if (curY > 100) { bsClose(mo.id); }     // 100px 이상 끌어내리면 닫힘
     else { mb.style.transform = 'translateY(0)'; }
     curY = 0;
   }
   mb.addEventListener('touchstart', onStart, { passive: true });
   mb.addEventListener('touchmove',  onMove,  { passive: true });
   mb.addEventListener('touchend',   onEnd);
+  mb.addEventListener('touchcancel', onEnd);
   mh.addEventListener('mousedown', onStart);
   window.addEventListener('mousemove', onMove);
   window.addEventListener('mouseup', onEnd);
