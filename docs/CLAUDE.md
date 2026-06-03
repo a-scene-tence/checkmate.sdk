@@ -303,6 +303,26 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.7 [2026-06-03] 전문가용 UI 전환 — 온보딩·설명 제거
+
+**배경**: 사용자가 "가계부 로직을 전부 이해한 사람이 쓴다"고 전제하고, PR #6~#8에서 추가된 온보딩 마법사·가이드 카드·계산식 힌트·자연어 설명을 전면 제거 요청. 단, 로직의 단계 흐름(①②③)은 유지.
+
+**수행**:
+- `openWizard()` → `switchMain('settings')` 스텁으로 교체, 마법사 HTML(#mo-wizard) 완전 삭제
+- `#set-guide` 가이드 카드, `#set-flex-preview` 여유자금 미리보기 블록 제거
+- 설정 카드 제목: `1️⃣` 등 이모지 번호 → `①②③` 유니코드 순서 기호로 통일
+- 개인·공동 카테고리 예산 섹션의 고정/평균 설명 그리드 제거; `renderBudgetSection()` 내 설명 텍스트 제거
+- 결산 탭 💡 계산식 note 제거, 대시보드 여유자금 공식 hint 제거
+- 거래 모달 `#jnote`·`#tx-preview` HTML 제거; `updatePaymentNote()`, `updateTxPreview()`, `updateFlexPreview()` no-op 스텁으로 교체
+- 자산 필드 부가 설명, 백업 안내 note 제거 (덮어쓰기 경고는 유지)
+- 빈 화면 CTA: h3+p 제거 → 버튼 1개만 유지
+- placeholder 간결화: `inp-amt` → "금액", `inp-desc` → "내용", 검색 → "검색", `liq-desc` → "내용", 예산 입력 → "금액"
+- `html/sw.js` CACHE_NAME v5 → v6
+
+**예방책**: 온보딩 텍스트·마법사 재추가는 사용자 명시 요청 시에만. 빈 화면 최소 CTA(`openWizard()` 버튼)는 유지하여 첫 진입 경험 완전 차단 방지.
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:

@@ -436,10 +436,7 @@ details[open].detail-box summary::after { content: " ▲"; }
 <div class="page active" id="page-overview">
   <div id="ov-p">
     <div id="ov-p-empty" style="display:none; text-align:center; padding: 64px 20px;">
-      <div style="font-size:52px; margin-bottom:16px;">👋</div>
-      <h3 style="font-size:18px; font-weight:700; color:var(--text); margin-bottom:8px;">가계부 작성을 시작해볼까요?</h3>
-      <p style="font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.5;">현재 통장 잔고를 먼저 설정해주시면<br>이번 달 쓸 수 있는 돈을 계산해 드려요.</p>
-      <button class="bsub" onclick="openWizard()" style="width:auto; padding:12px 24px; border-radius:24px; display:inline-block; font-size:14px;">초기 잔고 설정하러 가기</button>
+      <button class="bsub" onclick="openWizard()" style="width:auto; padding:12px 24px; border-radius:24px; display:inline-block; font-size:14px;">시작 잔고 입력하러 가기</button>
     </div>
 
     <div id="ov-p-main">
@@ -447,7 +444,6 @@ details[open].detail-box summary::after { content: " ▲"; }
         <div class="strip" style="background:var(--p)"></div>
         <div class="ctitle">여유자금 <span style="font-size:11px;font-weight:400;color:var(--muted);">· 이번 달 자유롭게 쓸 수 있는 돈</span></div>
         <div class="balmain"><span class="balamt" id="p-amt">₩0</span><span style="font-size:11px;color:var(--muted)" id="p-lbl">잔액</span></div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">잔고 − 전월 카드대금 − 고정 예산</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <div style="font-size:11px;color:var(--muted);white-space:nowrap;text-align:left">
             <div>월초 여유자금</div>
@@ -535,10 +531,7 @@ details[open].detail-box summary::after { content: " ▲"; }
 
   <div id="ov-j" style="display:none">
     <div id="ov-j-empty" style="display:none; text-align:center; padding: 64px 20px;">
-      <div style="font-size:52px; margin-bottom:16px;">👥</div>
-      <h3 style="font-size:18px; font-weight:700; color:var(--text); margin-bottom:8px;">공동 생활비 관리를 시작해요</h3>
-      <p style="font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.5;">공동 통장의 잔고를 입력하면<br>이번 달 생활비 진행률을 바로 확인할 수 있어요.</p>
-      <button class="bsub" style="background:var(--j); width:auto; padding:12px 24px; border-radius:24px; display:inline-block; font-size:14px;" onclick="openWizard()">공동 잔고 설정하러 가기</button>
+      <button class="bsub" style="background:var(--j); width:auto; padding:12px 24px; border-radius:24px; display:inline-block; font-size:14px;" onclick="openWizard()">공동 잔고 입력하러 가기</button>
     </div>
 
     <div id="ov-j-main">
@@ -639,7 +632,7 @@ details[open].detail-box summary::after { content: " ▲"; }
   <div class="txfilter" id="txfilter"></div>
   <div class="tx-search-wrap">
     <span class="tx-search-icon">🔍</span>
-    <input class="tx-search-inp" id="tx-search-inp" type="text" placeholder="내용, 카테고리, 금액으로 검색..." oninput="onTxSearch(this.value)">
+    <input class="tx-search-inp" id="tx-search-inp" type="text" placeholder="검색" oninput="onTxSearch(this.value)">
     <button class="tx-search-clear" id="tx-search-clear" onclick="clearTxSearch()" style="display:none">✕</button>
   </div>
   <div id="tx-p"></div>
@@ -675,7 +668,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     <div class="fg">
       <label class="fl">메모</label>
-      <input type="text" class="fi" id="liq-desc" placeholder="예: 주식 일부 매도">
+      <input type="text" class="fi" id="liq-desc" placeholder="내용">
     </div>
     <div class="fg">
       <label class="fl">날짜</label>
@@ -705,10 +698,6 @@ details[open].detail-box summary::after { content: " ▲"; }
         <div class="si2"><div class="sl">월초 대비 남음</div><div class="sv" id="sp-diff">-</div></div>
         <div class="si2"><div class="sl">절약률</div><div class="sv" id="sp-rate">-</div></div>
       </div>
-      <div class="note" style="margin:0 0 12px;font-size:11px;line-height:1.5;">
-        💡 <b>순지출</b> = 지출 − 수입 · <b>남음</b> = 월초 잔액 − 순지출<br>
-        아래 표의 <b>차이</b> = 카테고리 예산 − 수지
-      </div>
       <div class="settle-header">
         <span></span><span>카테고리</span><span style="text-align:right">예산</span><span style="text-align:right">수지</span><span style="text-align:right">차이</span>
       </div>
@@ -725,10 +714,6 @@ details[open].detail-box summary::after { content: " ▲"; }
         <div class="si2"><div class="sl">월초 대비 남음</div><div class="sv" id="sj-diff">-</div></div>
         <div class="si2"><div class="sl">절약률</div><div class="sv" id="sj-rate">-</div></div>
       </div>
-      <div class="note" style="margin:0 0 12px;font-size:11px;line-height:1.5;">
-        💡 <b>순지출</b> = 지출 − 수입 · <b>남음</b> = 월초 잔액 − 순지출<br>
-        아래 표의 <b>차이</b> = 카테고리 예산 − 수지
-      </div>
       <div class="settle-header">
         <span></span><span>카테고리</span><span style="text-align:right">예산</span><span style="text-align:right">수지</span><span style="text-align:right">차이</span>
       </div>
@@ -742,17 +727,9 @@ details[open].detail-box summary::after { content: " ▲"; }
 
   <!-- 개인 설정 -->
   <div id="set-personal">
-    <div class="card" id="set-guide" style="background:var(--plt);border-left:4px solid var(--p);display:none;">
-      <div class="ctitle" style="color:var(--p);">✨ 처음이라면 이 순서대로</div>
-      <div class="note" style="line-height:1.8;margin-bottom:0;">
-        <b>1️⃣ 시작 잔고</b> — 통장·현금에 얼마 있나요?<br>
-        <b>2️⃣ 카테고리 예산</b> — 매달 나가는 돈을 정해두면 여유자금이 자동 계산돼요<br>
-        <b>3️⃣ 자산</b> (선택) — 코인·주식·적금처럼 따로 추적할 잔액
-      </div>
-    </div>
     <div class="card">
       <div class="strip" style="background:var(--p)"></div>
-      <div class="ctitle">1️⃣ 이번 달 시작 잔고</div>
+      <div class="ctitle">① 시작 잔고</div>
       <div class="sr">
         <span class="sl2">🏦 체크카드/계좌 잔고</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-p-acc" placeholder="0">
@@ -765,35 +742,19 @@ details[open].detail-box summary::after { content: " ▲"; }
         <span class="sl2">💳 전월 카드대금</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-p-prev-card" placeholder="0">
       </div>
-      <div id="set-flex-preview" style="margin-top:14px;padding:10px 14px;background:var(--plt);border-radius:10px;font-size:13px;text-align:center;color:var(--p);">
-        💡 현재 여유자금: <b id="set-flex-amt" style="font-family:Arial,sans-serif;">₩0</b>
-        <div style="font-size:11px;opacity:.75;margin-top:2px;">잔고 − 전월 카드대금 − 고정 예산</div>
-      </div>
     </div>
     <div class="card">
       <div class="strip" style="background:var(--p)"></div>
-      <div class="ctitle">2️⃣ 카테고리 예산</div>
-      <div class="note" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;line-height:1.4;padding:0;background:none;">
-        <div style="background:var(--plt);padding:10px;border-radius:8px;">
-          📌 <b>고정</b>
-          <div style="font-size:11px;opacity:.85;margin-top:2px;">매달 같은 금액<br>(월세·통신비)</div>
-        </div>
-        <div style="background:var(--s2);padding:10px;border-radius:8px;">
-          📊 <b>평균</b>
-          <div style="font-size:11px;opacity:.85;margin-top:2px;">목표 금액<br>(실제 지출로 보정)</div>
-        </div>
-      </div>
+      <div class="ctitle">② 카테고리 예산</div>
       <div id="set-p-budgets"></div>
     </div>
     <div class="card">
       <div class="strip" style="background:linear-gradient(90deg,#1A3A5C,#2D5016)"></div>
-      <div class="ctitle">3️⃣ 자산 (코인·주식·적금)</div>
-      <div class="note">월초 잔액을 직접 입력하거나, 비워두면 전월 말 잔액이 자동 이월됩니다. 이번 달 지출 내역의 적금 항목이 자동 합산됩니다.</div>
+      <div class="ctitle">③ 자산</div>
       <div id="set-assets"></div>
     </div>
     <div class="card" style="margin-bottom:80px">
       <div class="ctitle">데이터 백업 / 복원</div>
-      <div class="note">JSON 파일로 내보내거나 불러와서 데이터를 안전하게 보관하세요. 앱을 새로 받아도 복원 후 그대로 사용할 수 있습니다.</div>
       <button class="btn-outline" onclick="exportData()">📤 JSON으로 내보내기</button>
       <button class="btn-outline" onclick="document.getElementById('import-file').click()">📥 JSON에서 불러오기</button>
       <div class="note" style="color:var(--danger);font-size:11px;margin-top:4px;margin-bottom:8px;">⚠️ 불러오기는 현재 데이터를 모두 덮어씁니다. 먼저 내보내기로 백업하세요.</div>
@@ -806,7 +767,7 @@ details[open].detail-box summary::after { content: " ▲"; }
   <div id="set-joint" style="display:none">
     <div class="card" style="margin-top:8px">
       <div class="strip" style="background:var(--j)"></div>
-      <div class="ctitle">1️⃣ 공동 시작 잔고</div>
+      <div class="ctitle">① 공동 시작 잔고</div>
       <div class="sr">
         <span class="sl2">🏦 공동 계좌 잔고</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-j-bal" placeholder="0">
@@ -814,17 +775,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     <div class="card" style="margin-bottom:80px">
       <div class="strip" style="background:var(--j)"></div>
-      <div class="ctitle">2️⃣ 공동 카테고리 예산</div>
-      <div class="note" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;line-height:1.4;padding:0;background:none;">
-        <div style="background:var(--jlt);padding:10px;border-radius:8px;">
-          📌 <b>고정</b>
-          <div style="font-size:11px;opacity:.85;margin-top:2px;">매달 같은 금액<br>(월세·통신비)</div>
-        </div>
-        <div style="background:var(--s2);padding:10px;border-radius:8px;">
-          📊 <b>평균</b>
-          <div style="font-size:11px;opacity:.85;margin-top:2px;">목표 금액<br>(실제 지출로 보정)</div>
-        </div>
-      </div>
+      <div class="ctitle">② 공동 카테고리 예산</div>
       <div id="set-j-budgets"></div>
     </div>
   </div>
@@ -857,18 +808,14 @@ details[open].detail-box summary::after { content: " ▲"; }
       </div>
     </div>
 
-    <div class="jnote" id="jnote" style="display:none; margin-top:-12px; margin-bottom:20px; text-align:center;">
-      🏦 체크카드/계좌: 공동 잔액 차감 &nbsp;|&nbsp; 💳 신용카드: 공동 차감 + 개인 보전
-    </div>
-
     <div class="fg" style="margin-bottom:28px;">
-      <input type="text" inputmode="numeric" class="fi big" id="inp-amt" placeholder="얼마를 쓰셨나요?" oninput="updateTxPreview()" style="text-align:center; font-size:32px!important; font-weight:700; padding:16px 0; border:none; border-bottom:2px solid var(--p); border-radius:0; background:transparent; color:var(--text);">
+      <input type="text" inputmode="numeric" class="fi big" id="inp-amt" placeholder="금액" style="text-align:center; font-size:32px!important; font-weight:700; padding:16px 0; border:none; border-bottom:2px solid var(--p); border-radius:0; background:transparent; color:var(--text);">
     </div>
 
     <div style="display:grid; grid-template-columns:1fr auto; gap:12px; margin-bottom:20px;">
       <div class="fg" style="margin-bottom:0;">
         <label class="fl">내용</label>
-        <input type="text" class="fi" id="inp-desc" placeholder="예: 스타벅스, 주말농장 용품 등" style="padding:12px 14px;">
+        <input type="text" class="fi" id="inp-desc" placeholder="내용" style="padding:12px 14px;">
       </div>
       <div class="fg" style="margin-bottom:0;">
         <label class="fl">날짜</label>
@@ -882,8 +829,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     
     <div class="fg" id="asset-fg" style="display:none; margin-bottom:20px;">
-      <label class="fl">💰 어떤 자산에 넣을까요?</label>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">이 금액이 선택한 자산에 자동으로 적립돼요</div>
+      <label class="fl">자산 적립</label>
       <div class="chips" id="asset-chips"></div>
     </div>
 
@@ -896,10 +842,6 @@ details[open].detail-box summary::after { content: " ▲"; }
       </div>
     </div>
 
-    <div id="tx-preview" style="display:none;background:var(--s2);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px;text-align:center;">
-      💸 저장하면: 여유자금 <b id="pre-before" style="font-family:Arial,sans-serif;"></b>
-      → <b id="pre-after" style="font-family:Arial,sans-serif;"></b>
-    </div>
     <button class="bsub" id="bsub" onclick="saveTx()" style="padding:16px; font-size:16px; border-radius:14px;">지출 추가</button>
     <button id="bsub-del" onclick="deleteTxFromModal()" style="display:none;width:100%;padding:14px;border:none;background:var(--dlt);color:var(--danger);border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;">🗑 내역 삭제</button>
   </div>
@@ -944,175 +886,6 @@ details[open].detail-box summary::after { content: " ▲"; }
   </div>
 </div>
 
-<!-- ══ ONBOARDING WIZARD ══ -->
-<div class="mo" id="mo-wizard">
-  <div class="mb" style="padding: 32px 24px;">
-    <div style="display:flex;justify-content:flex-start;margin-bottom:4px;">
-      <button onclick="bsClose('mo-wizard')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:22px;padding:0;line-height:1;">‹</button>
-    </div>
-
-    <div id="wiz-step-a">
-      <div style="margin-bottom:20px;"><img src="icon-192.png" style="width:72px;height:72px;border-radius:18px;"></div>
-      <h3 style="margin-bottom:6px;font-size:18px;">체크메이트에 오신 걸 환영해요! 👋</h3>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">다른 가계부와 무엇이 다른지 먼저 알아보세요.</p>
-
-      <div style="background:var(--s2);border-radius:14px;padding:16px;margin-bottom:10px;font-size:13px;line-height:1.8;color:var(--text);">
-        <div style="font-weight:800;margin-bottom:6px;font-size:14px;">😟 기존 가계부의 한계</div>
-        월급은 들어왔는데 <b>"지금 얼마나 써도 될까?"</b>를 모르겠다.<br>
-        잔고는 있는데 왠지 불안하다.<br>
-        <span style="color:var(--muted);font-size:12px;">→ 월세·보험·구독료 등 고정비가 아직 안 빠진 돈이 섞여있기 때문!</span>
-      </div>
-
-      <div style="background:var(--plt);border-radius:14px;padding:16px;margin-bottom:10px;font-size:13px;line-height:1.8;color:var(--text);">
-        <div style="font-weight:800;margin-bottom:6px;font-size:14px;color:var(--p);">✅ 체크메이트의 핵심</div>
-        <b>고정 지출을 미리 빼고</b> 남은 <b style="color:var(--p);">진짜 여유자금</b>이 얼마인지<br>
-        매일 실시간으로 보여줍니다.<br>
-        <span style="color:var(--muted);font-size:12px;">→ "이번 달 이 정도는 써도 되는구나"를 숫자로 확인!</span>
-      </div>
-
-      <div style="background:#E6FAF5;border-radius:14px;padding:16px;margin-bottom:24px;font-size:13px;line-height:1.8;color:var(--text);">
-        <div style="font-weight:800;margin-bottom:6px;font-size:14px;color:#00966E;">💡 이런 분께 딱 맞아요</div>
-        월급날 잔고와 월말 잔고가 왜 다른지 모르겠는 분<br>
-        고정비·변동비를 나눠서 관리하고 싶은 분<br>
-        개인 + 공동생활비를 함께 관리하는 분
-      </div>
-
-      <button class="bsub" onclick="nextWizard('b')">다음 →</button>
-    </div>
-
-    <div id="wiz-step-b" style="display:none;">
-      <h3 style="margin-bottom:6px;font-size:18px;">앱 사용법 한눈에 보기 🗺️</h3>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">탭별로 역할이 나눠져 있어요.</p>
-
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
-
-        <div style="background:var(--s2);border-radius:12px;padding:14px;font-size:13px;">
-          <div style="font-weight:800;margin-bottom:4px;">🏠 요약 탭</div>
-          <div style="color:var(--muted);line-height:1.7;">
-            여유자금 현황을 한눈에 확인.<br>
-            <b>월초 잔고 - 고정비 예산 - 전월카드</b> = 여유자금<br>
-            지출이 쌓일수록 실시간으로 줄어들어요.
-          </div>
-        </div>
-
-        <div style="background:var(--s2);border-radius:12px;padding:14px;font-size:13px;">
-          <div style="font-weight:800;margin-bottom:4px;">📋 내역 탭</div>
-          <div style="color:var(--muted);line-height:1.7;">
-            지출·수입 기록. <b>개인/공동</b>으로 분리 관리.<br>
-            캘린더 뷰에서 날짜를 선택하면 해당일 내역 필터링.<br>
-            즐겨찾기 등록으로 자주 쓰는 항목 빠르게 입력.
-          </div>
-        </div>
-
-        <div style="background:var(--s2);border-radius:12px;padding:14px;font-size:13px;">
-          <div style="font-weight:800;margin-bottom:4px;">💰 자산 탭</div>
-          <div style="color:var(--muted);line-height:1.7;">
-            적금·주식·ISA 등 자산 현황 추적.<br>
-            매달 적립 기록 시 자동 합산. 매도 시 잔액 자동 차감.
-          </div>
-        </div>
-
-        <div style="background:var(--s2);border-radius:12px;padding:14px;font-size:13px;">
-          <div style="font-weight:800;margin-bottom:4px;">📊 결산 탭</div>
-          <div style="color:var(--muted);line-height:1.7;">
-            월별 수입·지출·여유자금 추이 확인.<br>
-            카테고리별 지출 패턴 분석.
-          </div>
-        </div>
-
-        <div style="background:var(--s2);border-radius:12px;padding:14px;font-size:13px;">
-          <div style="font-weight:800;margin-bottom:4px;">⚙️ 설정 탭</div>
-          <div style="color:var(--muted);line-height:1.7;">
-            <b>카테고리별 예산 설정이 핵심!</b><br>
-            · 고정 금액: 월세·보험처럼 매달 똑같이 나가는 돈<br>
-            · 평균 금액: 식비처럼 목표치를 정해두는 돈<br>
-            · 쓸수록 실제 평균으로 자동 보정됩니다.
-          </div>
-        </div>
-
-      </div>
-
-      <div style="display:flex;gap:8px;">
-        <button class="bsub" style="background:var(--bg);color:var(--muted);border:1px solid var(--border);flex:0.5;" onclick="nextWizard('a')">← 이전</button>
-        <button class="bsub" style="flex:1;" onclick="nextWizard(0)">다음 →</button>
-      </div>
-    </div>
-
-    <div id="wiz-step-0">
-      <div style="margin-bottom:20px;"><img src="icon-192.png" style="width:72px;height:72px;border-radius:18px;"></div>
-      <h3 style="margin-bottom:6px;font-size:18px;">체크메이트에 오신 걸 환영해요!</h3>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">시작 전에 데이터 저장 방식을 꼭 확인해 주세요.</p>
-
-      <div style="background:var(--s2);border-radius:14px;padding:16px;margin-bottom:12px;font-size:13px;line-height:1.7;color:var(--text);">
-        <div style="font-weight:800;margin-bottom:8px;">📱 기기에만 저장돼요</div>
-        모든 데이터는 <b>이 기기의 앱 내부</b>에만 저장됩니다.<br>
-        별도 계정·서버·클라우드가 없어서 다른 기기에서는 볼 수 없어요.
-      </div>
-
-      <div style="background:#FFF5E5;border-radius:14px;padding:16px;margin-bottom:12px;font-size:13px;line-height:1.7;color:var(--text);">
-        <div style="font-weight:800;margin-bottom:8px;">⚠️ 이럴 때 데이터가 지워질 수 있어요</div>
-        <span style="color:var(--danger);">·</span> 브라우저 캐시·사이트 데이터 삭제<br>
-        <span style="color:var(--danger);">·</span> 앱(브라우저) 삭제 후 재설치<br>
-        <span style="color:var(--danger);">·</span> 휴대폰 초기화
-      </div>
-
-      <div style="background:#E8F3FF;border-radius:14px;padding:16px;margin-bottom:24px;font-size:13px;line-height:1.7;color:var(--text);">
-        <div style="font-weight:800;margin-bottom:8px;">💾 JSON 백업으로 지키세요</div>
-        설정 탭 → <b>데이터 백업/복원</b>에서 JSON 파일로 내보낼 수 있어요.<br>
-        이 파일을 갤러리·드라이브 등에 보관해 두면<br>
-        언제든 <b>복원</b>할 수 있습니다. <b>정기적인 백업을 권장해요.</b>
-      </div>
-
-      <button class="bsub" onclick="nextWizard(1)">확인했어요, 시작하기</button>
-    </div>
-
-    <div id="wiz-step-1">
-      <div style="margin-bottom:16px;"><img src="icon-192.png" style="width:72px;height:72px;border-radius:18px;"></div>
-      <h3 style="margin-bottom:8px; font-size:18px;">1단계: 나의 현재 잔고</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.5;">여유자금을 계산하기 위해<br>현재 보유하신 금액과 결제 예정 카드값을 적어주세요.</p>
-      <div class="fg">
-        <label class="fl">🏦 개인 통장 잔액 (급여통장 등)</label>
-        <input type="text" inputmode="numeric" class="fi sinp-comma-gen" id="wiz-p-acc" placeholder="예: 3,000,000" class="sinp-comma-gen">
-      </div>
-      <div class="fg">
-        <label class="fl">💵 개인 현금 잔액</label>
-        <input type="text" inputmode="numeric" class="fi sinp-comma-gen" id="wiz-p-cash" placeholder="0" class="sinp-comma-gen">
-      </div>
-      <div class="fg" style="margin-bottom:32px;">
-        <label class="fl">💳 전월 카드대금 (이번 달 결제될 금액)</label>
-        <input type="text" inputmode="numeric" class="fi sinp-comma-gen" id="wiz-p-card" placeholder="0" class="sinp-comma-gen">
-      </div>
-      <button class="bsub" onclick="nextWizard(2)">다음 단계로 (1/3)</button>
-    </div>
-
-    <div id="wiz-step-2" style="display:none;">
-      <div style="margin-bottom:16px;"><img src="icon-192.png" style="width:72px;height:72px;border-radius:18px;"></div>
-      <h3 style="margin-bottom:8px; font-size:18px;">2단계: 공동 통장 잔고</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.5;">가족과 함께 쓰는 공동 생활비 통장이 있다면 적어주세요.<br><b>(개인 가계부만 쓰신다면 건너뛰셔도 됩니다!)</b></p>
-      <div class="fg" style="margin-bottom:32px;">
-        <label class="fl">🏦 공동 생활비 통장 잔액</label>
-        <input type="text" inputmode="numeric" class="fi sinp-comma-gen" id="wiz-j-acc" placeholder="예: 1,500,000" class="sinp-comma-gen">
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="bsub" style="background:var(--bg);color:var(--muted);border:1px solid var(--border);flex:0.6;font-size:14px;" onclick="document.getElementById('wiz-j-acc').value=''; nextWizard(3)">건너뛰기</button>
-        <button class="bsub" style="background:var(--j);flex:1;" onclick="nextWizard(3)">입력 후 다음 (2/3)</button>
-      </div>
-    </div>
-
-    <div id="wiz-step-3" style="display:none; text-align:center; padding-top:10px;">
-      <div style="margin-bottom:16px;"><img src="icon-192.png" style="width:72px;height:72px;border-radius:18px;"></div>
-      <h3 style="margin-bottom:12px; font-size:18px;">기본 잔고 입력 완료!</h3>
-      <div style="font-size:13px;color:var(--text);margin-bottom:28px;line-height:1.6;text-align:left;background:var(--s2);padding:16px;border-radius:12px;">
-        <b>이제 마지막으로 '예산'을 설정할 차례입니다.</b><br><br>
-        📌 <b>고정 금액:</b> 월세, 통신비처럼 매달 숨만 쉬어도 <b>똑같이</b> 나가는 돈이에요.<br>
-        <br>
-        📊 <b>평균 금액:</b> 식비, 꾸밈비처럼 매달 다르지만 <b>"이 정도만 써야지"</b> 하고 정해두는 목표 금액이에요. (앱에 지출이 쌓일수록 진짜 나의 월평균으로 똑똑하게 자동 보정됩니다!)
-      </div>
-      <button class="bsub" onclick="finishWizard()" style="background:var(--text);">예산 설정하러 가기</button>
-    </div>
-
-  </div>
-</div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -2669,13 +2442,7 @@ function renderAssets() {
 }
 
 // ── Settings ─────────────────────────────────
-function updateFlexPreview() {
-  const el = document.getElementById('set-flex-amt');
-  if (!el) return;
-  const r = calcPersonalRemain();
-  el.textContent = '₩' + r.flex.toLocaleString('ko-KR');
-  el.style.color = r.flex < 0 ? 'var(--danger)' : 'var(--p)';
-}
+function updateFlexPreview() {}
 
 function renderSettingsPage() {
   const ms=getMs();
@@ -2687,17 +2454,11 @@ function renderSettingsPage() {
       el.value = v ? v.toLocaleString('ko-KR') : '';
     }
   });
-  // 가이드 카드: 잔고·예산 모두 비어있는 신규 사용자에게만 표시
-  const hasBal = ms.pAccBal || ms.pCashBal || ms.jBal || ms.pPrevCard;
-  const hasBud = S.pCats.some(c => c.seedAmt > 0) || S.jCats.some(c => c.seedAmt > 0);
-  const guide  = document.getElementById('set-guide');
-  if (guide) guide.style.display = (hasBal || hasBud) ? 'none' : 'block';
   renderBudgetSection('personal');
   renderBudgetSection('joint');
   renderAssetSettings();
   initBudgetDelegation();
   initBalDelegation();
-  updateFlexPreview();
 }
 
 function renderBudgetSection(type) {
@@ -2716,10 +2477,8 @@ function renderBudgetSection(type) {
     } else if (isFixed) {
       fieldsHtml=`
       <div style="background:var(--bg); padding:14px; border-radius:12px; margin-top:8px;">
-        <div style="font-size:12px; font-weight:700; color:#5555AA; margin-bottom:6px;">📌 고정 금액 (매달 동일)</div>
-        <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">월세, 통신비, 보험료처럼 매달 똑같이 확정되어 나가는 금액을 적어주세요.</div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <input type="text" inputmode="numeric" class="sinp sinp-comma" data-type="${type}" data-idx="${i}" data-key="seedAmt" style="flex:1; text-align:right; font-size:14px;" value="${(()=>{ const mv=((S.ms[S.month]||{}).budgets||{})[type]?.[c.name]; const v=mv!==undefined?mv:(c.seedAmt||0); return v?v.toLocaleString('ko-KR'):''; })()}" placeholder="예: 50,000">
+          <input type="text" inputmode="numeric" class="sinp sinp-comma" data-type="${type}" data-idx="${i}" data-key="seedAmt" style="flex:1; text-align:right; font-size:14px;" value="${(()=>{ const mv=((S.ms[S.month]||{}).budgets||{})[type]?.[c.name]; const v=mv!==undefined?mv:(c.seedAmt||0); return v?v.toLocaleString('ko-KR'):''; })()}" placeholder="금액">
           <span style="font-size:13px; font-weight:600;">원</span>
         </div>
       </div>`;
@@ -2728,29 +2487,22 @@ function renderBudgetSection(type) {
       const adjColor = adjVal>0?'var(--danger)':adjVal<0?'var(--ok)':'var(--muted)';
       fieldsHtml=`
       <div style="background:var(--bg); padding:14px; border-radius:12px; margin-top:8px;">
-        <div style="font-size:12px; font-weight:700; color:var(--p); margin-bottom:6px;">📊 목표/평균 금액 (유동적)</div>
-        <div style="font-size:11px; color:var(--muted); margin-bottom:12px; line-height:1.4;">
-          식비처럼 매달 달라지지만, <b>대략적인 한 달 목표 금액</b>을 정해주세요.<br>
-          <span style="color:var(--text); font-weight:500;">(앱을 쓸수록 실제 지출과 합산되어 진짜 평균으로 보정됩니다)</span>
-        </div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-          <input type="text" inputmode="numeric" class="sinp sinp-comma" data-type="${type}" data-idx="${i}" data-key="seedAmt" style="flex:1; text-align:right; font-size:14px;" value="${(()=>{ const mv=((S.ms[S.month]||{}).budgets||{})[type]?.[c.name]; const v=mv!==undefined?mv:(c.seedAmt||0); return v?v.toLocaleString('ko-KR'):''; })()}" placeholder="예: 300,000">
+          <input type="text" inputmode="numeric" class="sinp sinp-comma" data-type="${type}" data-idx="${i}" data-key="seedAmt" style="flex:1; text-align:right; font-size:14px;" value="${(()=>{ const mv=((S.ms[S.month]||{}).budgets||{})[type]?.[c.name]; const v=mv!==undefined?mv:(c.seedAmt||0); return v?v.toLocaleString('ko-KR'):''; })()}" placeholder="금액">
           <span style="font-size:13px; font-weight:600;">원</span>
         </div>
         <details style="margin-top:12px;">
-          <summary style="font-size:11px; color:var(--muted); cursor:pointer; outline:none; font-weight:500;">⚙️ 고급 설정 (보통은 그냥 두세요)</summary>
+          <summary style="font-size:11px; color:var(--muted); cursor:pointer; outline:none; font-weight:500;">⚙️ 고급 설정</summary>
           <div style="padding-top:14px; margin-top:8px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:16px;">
             <div>
-              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">📅 앱 시작 전부터 써왔나요?</div>
-              <div style="font-size:11px; color:var(--muted); margin-bottom:8px; line-height:1.4;">이전부터 쓰던 카테고리라면 개월 수를 입력하세요. 평균이 더 정확해져요.</div>
+              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">📅 누적 개월 수</div>
               <div style="display:flex; align-items:center; gap:6px;">
                 <input type="number" class="sinp" style="width:60px; text-align:center; padding:6px;" value="${c.seedMonths||''}" placeholder="0" onchange="updCatField('${type}',${i},'seedMonths',this.value)">
                 <span style="font-size:12px; color:var(--text);">개월</span>
               </div>
             </div>
             <div>
-              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">🎯 이번 달만 다르게 쓸 계획</div>
-              <div style="font-size:11px; color:var(--muted); margin-bottom:8px; line-height:1.4;">평소보다 더 쓸 예정이면 <b style="color:var(--danger);">+금액</b>, 적게 쓸 예정이면 <b style="color:var(--ok);">-금액</b>으로 입력하세요.</div>
+              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">🎯 이번 달 조정</div>
               <div style="display:flex; align-items:center; gap:6px;">
                 <input type="text" inputmode="numeric" class="sinp sinp-comma-adj" style="width:160px; color:${adjColor}; border-color:${adjVal?adjColor:'var(--border)'}" value="${adjVal ? (adjVal>0?'+':'')+adjVal.toLocaleString('ko-KR') : ''}" placeholder="예: +50,000" data-type="${type}" data-cat="${c.name}">
                 <span style="font-size:12px; color:var(--muted);">원</span>
@@ -3011,7 +2763,7 @@ function setDirection(dir) {
   document.getElementById('pm-card').style.display = isInc ? 'none' : '';
   if (isInc && mPay==='card') setPayment('account');
   document.getElementById('payment-lbl').textContent = isInc ? '수입 경로' : '결제 수단';
-  document.getElementById('inp-amt').placeholder = isInc ? '얼마를 받으셨나요?' : '얼마를 쓰셨나요?';
+  document.getElementById('inp-amt').placeholder = '금액';
   if (!_editId) mCat=null;
   // 카테고리 칩 재렌더
   const selCls = mType==='personal'?'sp':'sj';
@@ -3044,7 +2796,6 @@ function openModal() {
   document.getElementById('pm-card').style.display='';
   document.getElementById('payment-lbl').textContent='결제 수단';
   setType(subTab==='personal'?'personal':'joint'); setPayment('account');
-  document.getElementById('tx-preview').style.display = 'none';
   bsOpen('modal');
 }
 
@@ -3080,85 +2831,15 @@ function openEditModal(id) {
     ).join('');
   }
 
-  document.getElementById('tx-preview').style.display = 'none';
   bsOpen('modal');
 }
 function closeOut(e) { if(e.target===document.getElementById('modal')) closeModal(); }
 function closeModal() { bsClose('modal'); }
 
 // 돈의 흐름 안내 문구 업데이트
-function updatePaymentNote() {
-  const noteEl = document.getElementById('jnote');
-  if (mDir === 'income') { noteEl.style.display = 'none'; return; }
-  noteEl.style.display = 'block';
-  noteEl.style.padding = '10px 14px';
-  noteEl.style.borderRadius = '10px';
-  noteEl.style.marginTop = '-12px';
-  noteEl.style.marginBottom = '20px';
+function updatePaymentNote() {}
 
-  const row = (a, b) => `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:12px;">
-      <div style="text-align:center;padding:6px 4px;border-right:1px solid rgba(0,0,0,.08);">
-        <div style="font-size:16px;margin-bottom:2px;">${a.icon}</div>
-        <div style="opacity:.7;margin-bottom:1px;">${a.label}</div>
-        <div style="font-weight:700;">${a.value}</div>
-      </div>
-      <div style="text-align:center;padding:6px 4px;">
-        <div style="font-size:16px;margin-bottom:2px;">${b.icon}</div>
-        <div style="opacity:.7;margin-bottom:1px;">${b.label}</div>
-        <div style="font-weight:700;">${b.value}</div>
-      </div>
-    </div>`;
-
-  if (mType === 'personal') {
-    if (mPay === 'card') {
-      noteEl.style.background = 'var(--plt)';
-      noteEl.style.color = 'var(--p)';
-      noteEl.innerHTML = row(
-        {icon:'🏦', label:'통장 잔고', value:'그대로'},
-        {icon:'📉', label:'여유자금',  value:'지금 차감'}
-      );
-    } else {
-      noteEl.style.background = 'var(--s2)';
-      noteEl.style.color = 'var(--muted)';
-      noteEl.innerHTML = row(
-        {icon:'🏦', label:'통장 잔고',  value:'지금 차감'},
-        {icon:'📉', label:'여유자금',   value:'지금 차감'}
-      );
-    }
-  } else {
-    if (mPay === 'card') {
-      noteEl.style.background = 'var(--jlt)';
-      noteEl.style.color = 'var(--j)';
-      noteEl.innerHTML = row(
-        {icon:'👥', label:'공동 잔고',  value:'지금 차감'},
-        {icon:'🔄', label:'내 계좌',    value:'+보전'}
-      );
-    } else {
-      noteEl.style.background = 'var(--jlt)';
-      noteEl.style.color = 'var(--j)';
-      noteEl.innerHTML = row(
-        {icon:'👥', label:'공동 잔고',  value:'지금 차감'},
-        {icon:'💳', label:'내 잔고',    value:'변화 없음'}
-      );
-    }
-  }
-}
-
-function updateTxPreview() {
-  const el = document.getElementById('tx-preview');
-  if (mType !== 'personal' || mDir !== 'expense') { el.style.display = 'none'; return; }
-  const raw = (document.getElementById('inp-amt').value || '').replace(/[^0-9]/g, '');
-  if (!raw) { el.style.display = 'none'; return; }
-  const amt = parseInt(raw, 10);
-  if (!amt) { el.style.display = 'none'; return; }
-  const r = calcPersonalRemain();
-  const after = r.remain - amt;
-  document.getElementById('pre-before').textContent = '₩' + r.remain.toLocaleString('ko-KR');
-  document.getElementById('pre-after').textContent  = '₩' + after.toLocaleString('ko-KR');
-  document.getElementById('pre-after').style.color  = after < 0 ? 'var(--danger)' : 'var(--ok)';
-  el.style.display = 'block';
-}
+function updateTxPreview() {}
 
 function setType(t) {
   mType=t;
@@ -3784,42 +3465,11 @@ function clearRange() {
 // ═══════════════════════════════════════════════
 //  ONBOARDING WIZARD
 // ═══════════════════════════════════════════════
+// 온보딩 마법사 제거됨 — 빈 상태 CTA는 설정 탭으로 이동
 function openWizard() {
-  const ms = S.ms[S.month] || {};
-  const fmt4 = v => v ? v.toLocaleString('ko-KR') : '';
-  document.getElementById('wiz-p-acc').value  = fmt4(ms.pAccBal);
-  document.getElementById('wiz-p-cash').value = fmt4(ms.pCashBal);
-  document.getElementById('wiz-p-card').value = fmt4(ms.pPrevCard);
-  document.getElementById('wiz-j-acc').value  = fmt4(ms.jBal);
-  nextWizard('a');
-  bsOpen('mo-wizard');
-  setTimeout(initGenComma, 50);
-}
-
-function nextWizard(step) {
-  ['a','b',0,1,2,3].forEach(i => {
-    const el = document.getElementById(`wiz-step-${i}`);
-    if(el) el.style.display = i===step ? 'block' : 'none';
-  });
-}
-
-function finishWizard() {
-  if(!S.ms[S.month]) S.ms[S.month]={};
-  S.ms[S.month].pAccBal   = parseInput(document.getElementById('wiz-p-acc'));
-  S.ms[S.month].pCashBal  = parseInput(document.getElementById('wiz-p-cash'));
-  S.ms[S.month].pPrevCard = parseInput(document.getElementById('wiz-p-card'));
-  S.ms[S.month].jBal      = parseInput(document.getElementById('wiz-j-acc'));
-  save();
-  bsClose('mo-wizard');
-  render();
   switchMain('settings');
   document.querySelector('main').scrollTop = 0;
 }
-
-document.getElementById('mo-wizard').addEventListener('click', e => {
-  if (e.target === document.getElementById('mo-wizard'))
-    bsClose('mo-wizard');
-});
 </script>
 <script>
 if ('serviceWorker' in navigator) {
