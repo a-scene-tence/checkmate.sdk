@@ -110,6 +110,10 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 .si2 .sl{font-size:11px;color:var(--muted);margin-bottom:2px;}
 .si2 .sv{font-variant-numeric:tabular-nums;font-size:15px;font-weight:500;}
 
+/* Line icons (모노크롬 — 이모지 대체) */
+.ic{width:1.05em;height:1.05em;vertical-align:-.15em;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.ic-lg{width:20px;height:20px;stroke-width:1.5;}
+
 /* Category rows */
 .crow{display:flex;flex-direction:column;padding:9px 0;border-bottom:1px solid var(--border);}
 .crow:last-child{border-bottom:none;}
@@ -145,8 +149,10 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 .srow{display:grid;grid-template-columns:16px 1fr 68px 64px 80px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:6px;}
 .srow:last-child{border-bottom:none;}
 .srow-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.srow-name{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.srow-type{font-size:10px;padding:2px 6px;border-radius:10px;font-weight:600;}
+.srow-name{font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;min-width:0;}
+.srow-name .ic{flex-shrink:0;}
+.srow-nm-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.srow-type{font-size:10px;padding:2px 6px;border-radius:var(--radius-sm);font-weight:600;}
 .srow-type.avg{background:var(--plt);color:var(--p);}
 .srow-type.fixed{background:var(--g2);color:var(--g5);}
 .srow-budget{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted);text-align:right;white-space:nowrap;}
@@ -178,7 +184,7 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 .tb{flex:1;padding:9px 4px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);color:var(--muted);transition:all .15s;border:1px solid transparent;background:none;font-family:inherit;}
 .tb.active{background:#fff;color:var(--text);font-weight:700;border:var(--hairline);box-shadow:none;}
 .chips{display:flex;flex-wrap:wrap;gap:7px;}
-.chip{padding:7px 14px;border-radius:var(--radius-pill);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .15s;}
+.chip{padding:7px 13px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .15s;}
 .chip.sp,.chip.sj{border-color:var(--text);color:#fff;background:var(--text);font-weight:600;}
 .bsub{width:100%;color:white;border:none;border-radius:var(--radius);padding:15px;font-size:15px;font-weight:700;letter-spacing:.2px;font-family:inherit;cursor:pointer;margin-top:6px;transition:background .2s;background:var(--text);}
 .jnote{font-size:11px;color:var(--j);background:var(--jlt);border-radius:8px;padding:8px 12px;margin-bottom:14px;line-height:1.7;}
@@ -196,7 +202,7 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 .brow:last-child{border-bottom:none;}
 .brow-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .brow-name{font-size:13px;font-weight:600;flex:1;}
-.brow-typebtn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.brow-typebtn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--radius-sm);cursor:pointer;border:1.5px solid;transition:all .15s;}
 .brow-typebtn.avg{border-color:var(--p);color:var(--p);background:var(--plt);}
 .brow-typebtn.fixed{border-color:var(--g4);color:var(--g5);background:var(--g2);}
 .brow-fields{display:flex;flex-direction:column;gap:6px;}
@@ -229,7 +235,7 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 /* ── Tx Filter ── */
 .txfilter{display:flex;gap:6px;padding:12px 0 8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .txfilter::-webkit-scrollbar{display:none;}
-.txftab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--s2);color:var(--muted);cursor:pointer;white-space:nowrap;border:none;font-family:inherit;transition:all .15s;}
+.txftab{padding:5px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;background:var(--s2);color:var(--muted);cursor:pointer;white-space:nowrap;border:none;font-family:inherit;transition:all .15s;}
 .txftab.active{background:var(--text);color:var(--bg);}
 .txftab.p-act{background:var(--p);color:#fff;}
 .txftab.j-act{background:var(--j);color:#fff;}
@@ -261,7 +267,8 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 
 /* ── Assets ── */
 .asset-card{background:var(--surface);border:var(--hairline);border-radius:var(--radius);padding:16px;box-shadow:none;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:border-color .2s;}
-.asset-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.asset-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;}
+.asset-icon .ic-lg{width:24px;height:24px;}
 .asset-body{flex:1;min-width:0;}
 .asset-name{font-size:13px;font-weight:600;margin-bottom:1px;}
 .asset-sub{font-size:11px;color:var(--muted);line-height:1.45;}
@@ -298,7 +305,7 @@ details[open].detail-box summary::after { content: " ▲"; }
 #fav-bar-j { background:var(--card); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
 #fav-bar-inner, #fav-bar-j-inner { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
 #fav-bar-inner::-webkit-scrollbar, #fav-bar-j-inner::-webkit-scrollbar { display:none; }
-.fav-btn { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 10px; background:var(--s2); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; white-space:nowrap; transition:all .15s; flex-shrink:0; min-width:52px; }
+.fav-btn { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 10px; background:var(--s2); border:1.5px solid var(--border); border-radius:var(--radius); cursor:pointer; white-space:nowrap; transition:all .15s; flex-shrink:0; min-width:52px; }
 .fav-btn:active { transform:scale(.95); background:var(--plt); border-color:var(--p); }
 .fav-btn-emoji { font-size:18px; line-height:1; }
 .fav-btn-label { font-size:10px; font-weight:600; color:var(--text); max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -402,7 +409,7 @@ details[open].detail-box summary::after { content: " ▲"; }
         <span class="mlbl" id="monthLabel" onclick="openMonthPicker()"></span>
         <button onclick="changeMonth(1)">›</button>
       </div>
-      <button class="gsync-chip" id="gsync-chip" onclick="toggleGsyncMenu(event)" title="Google 동기화" aria-label="Google 동기화"><span id="gsync-chip-ico">⟲</span></button>
+      <button class="gsync-chip" id="gsync-chip" onclick="toggleGsyncMenu(event)" title="Google 동기화" aria-label="Google 동기화"><span id="gsync-chip-ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></span></button>
     </div>
   </div>
   <div class="ntabs">
@@ -418,21 +425,21 @@ details[open].detail-box summary::after { content: " ▲"; }
 <div class="gsync-menu" id="gsync-menu">
   <div id="gsync-login-view">
     <div class="gsync-mtitle">Google 동기화</div>
-    <div class="gsync-mnote">로그인하면 모바일·아이패드 등 여러 기기에서 데이터를 동기화할 수 있어요.</div>
-    <button class="btn-outline" style="border-color:var(--p);color:var(--p);" onclick="signInWithGoogle()">🔑 Google로 로그인</button>
+    <div class="gsync-mnote">로그인하면 모바일·아이패드 등 여러 기기에서 데이터를 동기화합니다.</div>
+    <button class="btn-outline" style="border-color:var(--p);color:var(--p);" onclick="signInWithGoogle()">Google로 로그인</button>
   </div>
   <div id="gsync-connected-view" style="display:none">
     <div id="gsync-user-info"></div>
     <div id="gsync-last-sync"></div>
-    <button class="btn-outline" onclick="driveSave(true);closeGsyncMenu()">☁️ 구글에 저장</button>
-    <button class="btn-outline" onclick="driveLoad();closeGsyncMenu()">📂 구글에서 불러오기</button>
+    <button class="btn-outline" onclick="driveSave(true);closeGsyncMenu()">구글에 저장</button>
+    <button class="btn-outline" onclick="driveLoad();closeGsyncMenu()">구글에서 불러오기</button>
     <button class="btn-outline danger" onclick="signOutGoogle();closeGsyncMenu()">로그아웃</button>
   </div>
 </div>
 
 <div class="stabs" id="subTabRow">
-  <div class="stab active personal" id="st-personal" onclick="switchSub('personal')">👤 개인</div>
-  <div class="stab joint" id="st-joint" onclick="switchSub('joint')">👥 공동</div>
+  <div class="stab active personal" id="st-personal" onclick="switchSub('personal')">개인</div>
+  <div class="stab joint" id="st-joint" onclick="switchSub('joint')">공동</div>
 </div>
 
 <main>
@@ -440,7 +447,7 @@ details[open].detail-box summary::after { content: " ▲"; }
 <div class="page active" id="page-overview">
   <div id="ov-p">
     <div id="ov-p-empty" style="display:none; text-align:center; padding: 64px 20px;">
-      <button class="bsub" onclick="openWizard()" style="width:auto; padding:12px 24px; border-radius:24px; display:inline-block; font-size:14px;">시작 잔고 입력하러 가기</button>
+      <button class="bsub" onclick="openWizard()" style="width:auto; padding:12px 24px; border-radius:var(--radius); display:inline-block; font-size:14px;">시작 잔고 입력</button>
     </div>
 
     <div id="ov-p-main">
@@ -485,26 +492,26 @@ details[open].detail-box summary::after { content: " ▲"; }
         <div style="border-top:1px solid var(--border);margin:10px 0"></div>
         <div class="sg">
           <div class="si2">
-            <div class="sl">📉 이번달 지출</div>
+            <div class="sl">이번달 지출</div>
             <div class="sv" id="p-total-spent">₩0</div>
           </div>
           <div class="si2">
-            <div class="sl" style="color:var(--ok)">📈 이번달 수입</div>
+            <div class="sl" style="color:var(--ok)">이번달 수입</div>
             <div class="sv" style="color:var(--ok)" id="p-total-income">₩0</div>
           </div>
         </div>
         <div style="border-top:1px solid var(--border);margin:10px 0"></div>
         <div style="display:flex;flex-direction:column;gap:6px;">
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
-            <span style="color:var(--muted)">💳 신용카드</span>
+            <span style="color:var(--muted)">신용카드</span>
             <span id="p-card-spent-label" style="font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)">₩0</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
-            <span style="color:var(--muted)">🏦 체크카드/계좌</span>
+            <span style="color:var(--muted)">체크카드/계좌</span>
             <span id="p-acc-spent-label" style="font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)">₩0</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
-            <span style="color:var(--muted)">💵 현금</span>
+            <span style="color:var(--muted)">현금</span>
             <span id="p-cash-spent-label" style="font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)">₩0</span>
           </div>
         </div>
@@ -521,7 +528,7 @@ details[open].detail-box summary::after { content: " ▲"; }
       <!-- 즐겨찾기 (개인) -->
       <div id="fav-bar">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-size:12px;font-weight:700;color:var(--muted);">⭐ 즐겨찾기</span>
+          <span style="font-size:12px;font-weight:700;color:var(--muted);">즐겨찾기</span>
           <button onclick="openFavEdit('personal')" style="background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;padding:0;">편집</button>
         </div>
         <div id="fav-bar-inner"></div>
@@ -535,7 +542,7 @@ details[open].detail-box summary::after { content: " ▲"; }
 
   <div id="ov-j" style="display:none">
     <div id="ov-j-empty" style="display:none; text-align:center; padding: 64px 20px;">
-      <button class="bsub" style="background:var(--j); width:auto; padding:12px 24px; border-radius:24px; display:inline-block; font-size:14px;" onclick="openWizard()">공동 잔고 입력하러 가기</button>
+      <button class="bsub" style="background:var(--j); width:auto; padding:12px 24px; border-radius:var(--radius); display:inline-block; font-size:14px;" onclick="openWizard()">공동 잔고 입력</button>
     </div>
 
     <div id="ov-j-main">
@@ -556,11 +563,11 @@ details[open].detail-box summary::after { content: " ▲"; }
         </div>
         <div class="sg" style="margin-bottom:8px">
           <div class="si2">
-            <div class="sl">📉 이번달 지출</div>
+            <div class="sl">이번달 지출</div>
             <div class="sv" id="j-total">₩0</div>
           </div>
           <div class="si2">
-            <div class="sl" style="color:var(--ok)">📈 이번달 수입</div>
+            <div class="sl" style="color:var(--ok)">이번달 수입</div>
             <div class="sv" style="color:var(--ok)" id="j-total-income">₩0</div>
           </div>
         </div>
@@ -573,7 +580,7 @@ details[open].detail-box summary::after { content: " ▲"; }
       <!-- 즐겨찾기 (공동) -->
       <div id="fav-bar-j">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-size:12px;font-weight:700;color:var(--muted);">⭐ 즐겨찾기</span>
+          <span style="font-size:12px;font-weight:700;color:var(--muted);">즐겨찾기</span>
           <button onclick="openFavEdit('joint')" style="background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;padding:0;">편집</button>
         </div>
         <div id="fav-bar-j-inner"></div>
@@ -617,10 +624,10 @@ details[open].detail-box summary::after { content: " ▲"; }
   <!-- 기간 합산 -->
   <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 2px;">
     <div class="tg" style="width:auto;gap:2px;padding:3px;border-radius:10px;">
-      <button class="tb" id="view-cal" onclick="setTxView('calendar')" style="padding:5px 12px;font-size:11px;font-weight:600;">📅 캘린더</button>
-      <button class="tb active" id="view-list" onclick="setTxView('list')" style="padding:5px 12px;font-size:11px;font-weight:600;">📄 리스트</button>
+      <button class="tb" id="view-cal" onclick="setTxView('calendar')" style="padding:5px 12px;font-size:11px;font-weight:600;">캘린더</button>
+      <button class="tb active" id="view-list" onclick="setTxView('list')" style="padding:5px 12px;font-size:11px;font-weight:600;">리스트</button>
     </div>
-    <button onclick="toggleRangeBar()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;">📅 기간 합산</button>
+    <button onclick="toggleRangeBar()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;">기간 합산</button>
   </div>
   <div id="range-bar">
     <div class="range-row">
@@ -635,9 +642,9 @@ details[open].detail-box summary::after { content: " ▲"; }
 
   <div class="txfilter" id="txfilter"></div>
   <div class="tx-search-wrap">
-    <span class="tx-search-icon">🔍</span>
+    <span class="tx-search-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <input class="tx-search-inp" id="tx-search-inp" type="text" placeholder="검색" oninput="onTxSearch(this.value)">
-    <button class="tx-search-clear" id="tx-search-clear" onclick="clearTxSearch()" style="display:none">✕</button>
+    <button class="tx-search-clear" id="tx-search-clear" onclick="clearTxSearch()" style="display:none"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
   <div id="tx-p"></div>
   <div id="tx-j" style="display:none"></div>
@@ -664,7 +671,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     <div class="mh"></div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
       <button onclick="bsClose('mo-liquidate')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:22px;padding:0;line-height:1;">‹</button>
-      <div class="mtitle" id="liq-title" style="margin-bottom:0;">💰 현금화</div>
+      <div class="mtitle" id="liq-title" style="margin-bottom:0;">현금화</div>
     </div>
     <div class="fg">
       <label class="fl">매도 금액</label>
@@ -681,8 +688,8 @@ details[open].detail-box summary::after { content: " ▲"; }
     <div class="fg">
       <label class="fl">매도한 돈이 들어올 곳</label>
       <div class="tg">
-        <button class="tb active" id="pm-liq-account" onclick="setLiqPayment('account')">🏦 체크카드/계좌</button>
-        <button class="tb" id="pm-liq-cash" onclick="setLiqPayment('cash')">💵 현금</button>
+        <button class="tb active" id="pm-liq-account" onclick="setLiqPayment('account')">체크카드/계좌</button>
+        <button class="tb" id="pm-liq-cash" onclick="setLiqPayment('cash')">현금</button>
       </div>
     </div>
     <div id="liq-balance-info" style="font-size:12px;color:var(--muted);margin-bottom:14px;padding:10px 12px;background:var(--s2);border-radius:10px;"></div>
@@ -735,15 +742,15 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div class="strip" style="background:var(--p)"></div>
       <div class="ctitle">① 시작 잔고</div>
       <div class="sr">
-        <span class="sl2">🏦 체크카드/계좌 잔고</span>
+        <span class="sl2">체크카드/계좌 잔고</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-p-acc" placeholder="0">
       </div>
       <div class="sr">
-        <span class="sl2">💵 현금 잔고</span>
+        <span class="sl2">현금 잔고</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-p-cash" placeholder="0">
       </div>
       <div class="sr">
-        <span class="sl2">💳 전월 카드대금</span>
+        <span class="sl2">전월 카드대금</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-p-prev-card" placeholder="0">
       </div>
     </div>
@@ -759,11 +766,11 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     <div class="card" style="margin-bottom:80px">
       <div class="ctitle">데이터 백업 / 복원</div>
-      <button class="btn-outline" onclick="exportData()">📤 JSON으로 내보내기</button>
-      <button class="btn-outline" onclick="document.getElementById('import-file').click()">📥 JSON에서 불러오기</button>
-      <div class="note" style="color:var(--danger);font-size:11px;margin-top:4px;margin-bottom:8px;">⚠️ 불러오기는 현재 데이터를 모두 덮어씁니다. 먼저 내보내기로 백업하세요.</div>
+      <button class="btn-outline" onclick="exportData()">JSON으로 내보내기</button>
+      <button class="btn-outline" onclick="document.getElementById('import-file').click()">JSON에서 불러오기</button>
+      <div class="note" style="color:var(--danger);font-size:11px;margin-top:4px;margin-bottom:8px;">불러오기는 현재 데이터를 모두 덮어씁니다. 먼저 내보내기로 백업하세요.</div>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
-      <button class="btn-outline danger" onclick="resetData()">🗑 모든 데이터 초기화</button>
+      <button class="btn-outline danger" onclick="resetData()">모든 데이터 초기화</button>
     </div>
   </div>
 
@@ -773,7 +780,7 @@ details[open].detail-box summary::after { content: " ▲"; }
       <div class="strip" style="background:var(--j)"></div>
       <div class="ctitle">① 공동 시작 잔고</div>
       <div class="sr">
-        <span class="sl2">🏦 공동 계좌 잔고</span>
+        <span class="sl2">공동 계좌 잔고</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-bal" id="set-j-bal" placeholder="0">
       </div>
     </div>
@@ -803,12 +810,12 @@ details[open].detail-box summary::after { content: " ▲"; }
 
     <div style="display:flex; gap:12px; margin-bottom:24px;">
       <div class="tg" style="flex:1; background:var(--s2); border-radius:12px; padding:4px;">
-        <button class="tb active" id="dir-exp" onclick="setDirection('expense')" style="padding:10px 0; font-size:13px; font-weight:600;">📉 지출</button>
-        <button class="tb" id="dir-inc" onclick="setDirection('income')" style="padding:10px 0; font-size:13px; font-weight:600;">📈 수입</button>
+        <button class="tb active" id="dir-exp" onclick="setDirection('expense')" style="padding:10px 0; font-size:13px; font-weight:600;">지출</button>
+        <button class="tb" id="dir-inc" onclick="setDirection('income')" style="padding:10px 0; font-size:13px; font-weight:600;">수입</button>
       </div>
       <div class="tg" style="flex:1; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:4px;">
-        <button class="tb active" id="tp-p" onclick="setType('personal')" style="padding:10px 0; font-size:13px; font-weight:600;">👤 개인</button>
-        <button class="tb" id="tp-j" onclick="setType('joint')" style="padding:10px 0; font-size:13px; font-weight:600;">👥 공동</button>
+        <button class="tb active" id="tp-p" onclick="setType('personal')" style="padding:10px 0; font-size:13px; font-weight:600;">개인</button>
+        <button class="tb" id="tp-j" onclick="setType('joint')" style="padding:10px 0; font-size:13px; font-weight:600;">공동</button>
       </div>
     </div>
 
@@ -840,14 +847,14 @@ details[open].detail-box summary::after { content: " ▲"; }
     <div class="fg" id="payment-fg" style="margin-bottom:28px;">
       <label class="fl" id="payment-lbl">결제 수단</label>
       <div class="tg" style="background:var(--bg); border:1px solid var(--border); padding:4px; border-radius:12px;">
-        <button class="tb active" id="pm-card" onclick="setPayment('card')" style="padding:10px 0; font-size:13px;">💳 신용카드</button>
-        <button class="tb" id="pm-account" onclick="setPayment('account')" style="padding:10px 0; font-size:13px;">🏦 체크카드/계좌</button>
-        <button class="tb" id="pm-cash" onclick="setPayment('cash')" style="padding:10px 0; font-size:13px;">💵 현금</button>
+        <button class="tb active" id="pm-card" onclick="setPayment('card')" style="padding:10px 0; font-size:13px;">신용카드</button>
+        <button class="tb" id="pm-account" onclick="setPayment('account')" style="padding:10px 0; font-size:13px;">체크카드/계좌</button>
+        <button class="tb" id="pm-cash" onclick="setPayment('cash')" style="padding:10px 0; font-size:13px;">현금</button>
       </div>
     </div>
 
     <button class="bsub" id="bsub" onclick="saveTx()" style="padding:16px; font-size:16px; border-radius:14px;">지출 추가</button>
-    <button id="bsub-del" onclick="deleteTxFromModal()" style="display:none;width:100%;padding:14px;border:none;background:var(--dlt);color:var(--danger);border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;">🗑 내역 삭제</button>
+    <button id="bsub-del" onclick="deleteTxFromModal()" style="display:none;width:100%;padding:14px;border:none;background:var(--dlt);color:var(--danger);border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;">내역 삭제</button>
   </div>
 </div>
 
@@ -862,7 +869,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     <!-- 새 즐겨찾기 추가 폼 -->
     <div style="background:var(--s2);border-radius:14px;padding:16px;margin-bottom:20px;">
       <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--p);">+ 새 즐겨찾기 추가</div>
-      <p style="font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.5;">카테고리만 지정해두면, 탭할 때 기존 입력 화면이 열리고 카테고리가 자동 선택돼요.</p>
+      <p style="font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.5;">카테고리만 지정하면, 탭할 때 기존 입력 화면이 열리고 카테고리가 자동 선택됩니다.</p>
       <div style="display:grid;grid-template-columns:48px 1fr;gap:8px;margin-bottom:14px;">
         <input type="text" id="fav-new-emoji" class="fi" placeholder="😊" maxlength="2" style="text-align:center;font-size:20px;padding:8px 4px;">
         <input type="text" id="fav-new-label" class="fi" placeholder="이름 (예: 아침 커피)" maxlength="12" style="padding:8px 12px;">
@@ -952,6 +959,80 @@ const DEF_ASSETS = [
   {id:'irp',   name:'IRP',      emoji:'🛡️', color:'#A05656'},
   {id:'pension',name:'연금저축',emoji:'🏦', color:'#4F6585'},
 ];
+
+// ═══════════════════════════════════════════════
+//  LINE ICONS (이모지 → 모노크롬 라인 아이콘)
+//  - 24×24 viewBox, stroke=currentColor, fill=none
+//  - 저장된 emoji 필드는 렌더 시점에 매핑(비파괴). 미매핑 이모지는 폴백.
+// ═══════════════════════════════════════════════
+const ICON = {
+  utensils:'<path d="M4 3v6a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3"/><path d="M6 11v10"/><path d="M18 3a3 3 0 0 0-3 3v5h3"/><path d="M18 3v18"/>',
+  coffee:'<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+  bus:'<path d="M4 17V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9"/><path d="M2 12h20"/><path d="M8 6v6"/><path d="M16 6v6"/><path d="M4 17h16"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/>',
+  car:'<path d="M5 17H3v-4l2-5h12l2 5v4h-2"/><path d="M5 13h14"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/>',
+  phone:'<rect x="6" y="2" width="12" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/>',
+  scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>',
+  piggy:'<path d="M11 17h3v2h2v-2.3c1.2-.6 2-1.6 2-2.7h2v-3h-2c-.2-.7-.6-1.3-1.2-1.8L18 5l-2.3 1.2A8 8 0 0 0 13 6c-4 0-7 2.2-7 5 0 1.6 1 3 2.5 4V19h2z"/><path d="M4 10a2 2 0 0 0 2 2"/><circle cx="14.5" cy="9.5" r=".6" fill="currentColor"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>',
+  film:'<rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M2 9h5"/><path d="M17 9h5"/><path d="M2 15h5"/><path d="M17 15h5"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.7-.7-.7-2.7z"/>',
+  card:'<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>',
+  box:'<path d="M21 8v8a2 2 0 0 1-1 1.7l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.7l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/>',
+  wallet:'<path d="M3 6a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2"/><path d="M3 6v12a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M21 9v4h-4a2 2 0 0 1 0-4z"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  building:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M12 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/>',
+  home:'<path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/><path d="M9 21v-6h6v6"/>',
+  bank:'<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10"/><path d="M14.5 9.3A2.6 2 0 0 0 12 8c-1.4 0-2.4.8-2.4 1.8 0 2.2 4.8 1.2 4.8 3.4 0 1-1 1.8-2.4 1.8a2.6 2 0 0 1-2.5-1.3"/>',
+  medal:'<path d="M7.2 15 2.7 7.1a2 2 0 0 1 .1-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.1a2 2 0 0 1 .1 2.2L16.8 15"/><path d="M11 12 5.1 2.2"/><path d="m13 12 5.9-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/>',
+  'chart-line':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  'chart-bar':'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+  user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  'arrow-up':'<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+  'arrow-down':'<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+  pencil:'<path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>',
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>',
+  cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+  folder:'<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>',
+  key:'<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.8 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.8H3a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  pin:'<line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.8a2 2 0 0 0-1.1-1.8l-1.8-.9a2 2 0 0 1-1.1-1.8V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.8a2 2 0 0 1-1.1 1.8l-1.8.9A2 2 0 0 0 5 15.2Z"/>',
+  star:'<polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/>',
+  ban:'<circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+};
+const E2I = {
+  '🍽️':'utensils','☕':'coffee','🚌':'bus','🚇':'bus','🚕':'car','🚗':'car','📱':'phone',
+  '💇':'scissors','💰':'piggy','🛡️':'shield','🎬':'film','🔧':'wrench','💳':'card','📦':'box',
+  '💵':'wallet','💴':'wallet','💶':'wallet','💷':'wallet','🔥':'flame','🏢':'building','🏡':'home','🏠':'home','🏦':'bank',
+  '🪙':'coin','🥇':'medal','📈':'chart-line','📊':'chart-bar','👤':'user','👥':'users',
+  '🔍':'search','✕':'x','✖':'x','❌':'x','📤':'upload','📥':'download','🗑':'trash','🗑️':'trash',
+  '☁️':'cloud','📂':'folder','📁':'folder','🔑':'key','🔄':'refresh','⟲':'refresh','♻️':'refresh',
+  '📅':'calendar','📆':'calendar','📄':'list','📋':'list','⚙️':'gear','🎯':'target','📌':'pin',
+  '⭐':'star','🌟':'star','🚫':'ban','＋':'plus','➕':'plus','📭':'inbox','📬':'inbox','❓':'box',
+};
+// gi: 인라인(텍스트 옆) 아이콘. 미매핑 이모지는 그대로 폴백.
+function gi(e){
+  const s = E2I[(e||'').trim()];
+  if(!s || !ICON[s]) return e || '';
+  return `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[s]}</svg>`;
+}
+// giL: 아이콘 타일용(더 큼). 미매핑은 이모지 폴백.
+function giL(e){
+  const s = E2I[(e||'').trim()];
+  if(!s || !ICON[s]) return `<span style="font-size:18px;line-height:1">${e||''}</span>`;
+  return `<svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true">${ICON[s]}</svg>`;
+}
 
 function defaultState() {
   return {
@@ -1813,9 +1894,9 @@ function renderOv(t) {
 
     const rebateEl=document.getElementById('p-rebate');
     const notes=[];
-    if(r.cardSpent>0) notes.push(`💳 신용카드 ${fmt(r.cardSpent)} → 계좌 잔액 변동 없음 · 여유자금에서 차감`);
-    if(r.jCardAmt>0) notes.push(`🔄 공동카드 ${fmt(r.jCardAmt)} → 공동잔액 차감 + 개인계좌 보전`);
-    if(r.prevCard>0) notes.push(`📅 전월카드 ${fmt(r.prevCard)} → 여유자금에서 차감`);
+    if(r.cardSpent>0) notes.push(`${gi('💳')} 신용카드 ${fmt(r.cardSpent)} → 계좌 잔액 변동 없음 · 여유자금에서 차감`);
+    if(r.jCardAmt>0) notes.push(`${gi('🔄')} 공동카드 ${fmt(r.jCardAmt)} → 공동잔액 차감 + 개인계좌 보전`);
+    if(r.prevCard>0) notes.push(`${gi('📅')} 전월카드 ${fmt(r.prevCard)} → 여유자금에서 차감`);
     rebateEl.innerHTML=notes.length?`<div style="font-size:11px;color:var(--muted);background:var(--s2);border-radius:8px;padding:8px 12px;margin-top:8px;line-height:1.9">${notes.join('<br>')}</div>`:'';
 
     const txsPI = document.getElementById('txs-p-income');
@@ -1859,8 +1940,8 @@ function renderOv(t) {
     const bdEl=document.getElementById('j-breakdown');
     if(r.cardSpent>0||r.accSpent>0){
       bdEl.innerHTML=`<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.9">
-        🏦 체크카드/계좌 ${fmt(r.accSpent)} → 즉시 차감<br>
-        💳 신용카드 ${fmt(r.cardSpent)} → 공동 차감 + 개인 계좌 보전
+        ${gi('🏦')} 체크카드/계좌 ${fmt(r.accSpent)} → 즉시 차감<br>
+        ${gi('💳')} 신용카드 ${fmt(r.cardSpent)} → 공동 차감 + 개인 계좌 보전
       </div>`;
     } else { bdEl.innerHTML=''; }
 
@@ -1880,14 +1961,14 @@ function renderIncomeCatList(type, incList) {
     const amt = incList.filter(x=>x.category===c.name).reduce((s,x)=>s+x.amount,0);
     if (!amt) return '';
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:13px">${c.emoji} ${c.name}</span>
+      <span style="font-size:13px">${gi(c.emoji)} ${c.name}</span>
       <span style="font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--ok)">+${fmt(amt)}</span>
     </div>`;
   }).filter(Boolean).join('');
   const knownCats = incCats.map(c=>c.name);
   const etc = incList.filter(x=>!knownCats.includes(x.category)).reduce((s,x)=>s+x.amount,0);
   const etcRow = etc>0 ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">
-    <span style="font-size:13px">📥 기타</span>
+    <span style="font-size:13px">${gi('📦')} 기타</span>
     <span style="font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--ok)">+${fmt(etc)}</span>
   </div>` : '';
   return `<div style="margin-top:8px">${rows}${etcRow}</div>`;
@@ -1963,7 +2044,7 @@ function renderCatList(type, list) {
     const canClose = type === 'personal' && c.budgetType !== 'none' && bud > 0;
     const closeBtn = canClose
       ? `<button onclick="event.stopPropagation();toggleCatClose('${type}','${c.name}')" title="${isClosed?'마감 취소':'잔여 예산 여유자금으로 확정'}"
-           style="margin-left:6px;background:${isClosed?'var(--ok)':'var(--s2)'};border:1.5px solid ${isClosed?'var(--ok)':'var(--border)'};border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;cursor:pointer;color:${isClosed?'white':'var(--muted)'};white-space:nowrap;flex-shrink:0;">
+           style="margin-left:6px;background:${isClosed?'var(--ok)':'var(--s2)'};border:1.5px solid ${isClosed?'var(--ok)':'var(--border)'};border-radius:var(--radius-sm);padding:2px 8px;font-size:10px;font-weight:700;cursor:pointer;color:${isClosed?'white':'var(--muted)'};white-space:nowrap;flex-shrink:0;">
            ${isClosed?`✓ +${fmt(saving)}`:'마감'}
          </button>`
       : '';
@@ -1978,9 +2059,9 @@ function renderCatList(type, list) {
     const accAmt  = catTxs.filter(x=>x.payment==='account').reduce((s,x)=>s+x.amount,0);
     const cashAmt = catTxs.filter(x=>x.payment==='cash').reduce((s,x)=>s+x.amount,0);
     const payRows = [
-      {label:'💳 신용카드', amt:cardAmt},
-      {label:'🏦 체크카드/계좌', amt:accAmt},
-      {label:'💵 현금', amt:cashAmt},
+      {label:`${gi('💳')} 신용카드`, amt:cardAmt},
+      {label:`${gi('🏦')} 체크카드/계좌`, amt:accAmt},
+      {label:`${gi('💵')} 현금`, amt:cashAmt},
     ].filter(p=>p.amt>0)
      .map(p=>`<div class="cat-pay-row"><span>${p.label}</span><span>${fmt(p.amt)}</span></div>`)
      .join('');
@@ -1995,7 +2076,7 @@ function renderCatList(type, list) {
       <div class="crow-main">
         <div class="cdot" style="background:${c.color}"></div>
         <div class="cinfo">
-          <div class="cname" style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;">${c.emoji} ${c.name}${typeBadge}${closeBtn}</div>
+          <div class="cname" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">${gi(c.emoji)} ${c.name}${typeBadge}${closeBtn}</div>
           ${closedOverlay}
           <div class="cbw"><div class="cbf" style="width:${pct}%;background:${isClosed?'var(--ok)':isOver?'var(--danger)':c.color}"></div></div>
         </div>
@@ -2041,9 +2122,9 @@ function renderTxFilter() {
   const catList = cats(t);
   const filters = [
     {id:'all', label:'전체'},
-    {id:'income', label:'📈 수입'},
-    {id:'expense', label:'📉 지출'},
-    ...catList.map(c=>({id:`cat:${c.name}`, label:`${c.emoji} ${c.name}`})),
+    {id:'income', label:`${gi('📈')} 수입`},
+    {id:'expense', label:`${gi('📉')} 지출`},
+    ...catList.map(c=>({id:`cat:${c.name}`, label:`${gi(c.emoji)} ${c.name}`})),
   ];
   document.getElementById('txfilter').innerHTML =
     `<span style="font-size:11px;font-weight:600;color:var(--muted);margin-right:4px;align-self:center;">필터</span>` +
@@ -2063,15 +2144,15 @@ function txItemHtml(x, cl) {
   const color=cat.color||'var(--g4)';
   const pm=x.payment==='card'?'<span class="badge b-card">신용카드</span>':x.payment==='account'?'<span class="badge b-acc">체크카드/계좌</span>':'<span class="badge b-cash">현금</span>';
   const assetDef = x.assetId ? S.userAssets.find(a=>a.id===x.assetId) : null;
-  const assetBadge = assetDef ? `<span class="badge" style="background:${assetDef.color}22;color:${assetDef.color}">${assetDef.emoji} ${assetDef.name}</span>` : '';
+  const assetBadge = assetDef ? `<span class="badge" style="background:var(--s2);color:var(--muted)">${gi(assetDef.emoji)} ${assetDef.name}</span>` : '';
   const isIncome = (x.dir||'expense')==='income';
   const incBadge = isIncome ? '<span class="badge b-income">수입</span>' : '';
   const iconEmoji = assetDef ? assetDef.emoji : (cat.emoji||'❓');
-  const iconBg = isIncome ? 'var(--olt)' : `${color}22`;
+  const iconBg = isIncome ? 'var(--olt)' : 'var(--s2)';
   const q = txSearch.trim().toLowerCase();
   const descHtml = highlight(x.desc, q);
   return `<div class="txitem" onclick="openEditModal('${x.id}')">
-    <div class="txicon" style="background:${iconBg}">${iconEmoji}</div>
+    <div class="txicon" style="background:${iconBg}">${giL(iconEmoji)}</div>
     <div class="txbody">
       <div class="txname">${descHtml}</div>
       <div class="txmeta">${incBadge}${pm}<span class="badge" style="background:var(--s2);color:var(--muted)">${x.category}</span>${assetBadge}</div>
@@ -2177,15 +2258,15 @@ function renderTx(t) {
       const [,mm,dd2] = txSelectedDate.split('-');
       html += `<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--border);padding-bottom:8px;margin-bottom:8px;">
         <span style="font-weight:700;font-size:15px;">${parseInt(mm)}월 ${parseInt(dd2)}일 내역</span>
-        <button onclick="selectCalDate('${txSelectedDate}')" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;">✕ 닫기</button>
+        <button onclick="selectCalDate('${txSelectedDate}')" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;">${gi('✕')} 닫기</button>
       </div>`;
       if (dateFiltered.length) {
         dateFiltered.forEach(x => { html += txItemHtml(x, cl); });
       } else {
-        html += `<div class="empty" style="padding:24px 20px"><p>이 날짜엔 내역이 없어요</p></div>`;
+        html += `<div class="empty" style="padding:24px 20px"><p>이 날짜엔 내역이 없습니다</p></div>`;
       }
     } else {
-      html += `<div class="empty" style="padding:24px 20px"><div style="font-size:24px;margin-bottom:8px">👆</div><p>날짜를 탭해 내역을 보거나<br>오른쪽 아래 <b>+</b> 버튼으로 새 거래를 추가하세요</p></div>`;
+      html += `<div class="empty" style="padding:24px 20px"><div style="font-size:24px;margin-bottom:8px">${gi('📭')}</div><p>날짜를 탭해 내역을 보거나<br>오른쪽 아래 <b>+</b> 버튼으로 새 거래를 추가하세요</p></div>`;
     }
     el.innerHTML = html;
     requestAnimationFrame(fitCalAmounts);
@@ -2195,8 +2276,8 @@ function renderTx(t) {
   // ── 리스트 뷰 ──
   if (!filtered.length) {
     el.innerHTML = txSearch
-      ? `<div class="empty"><div class="icon">🔍</div><p>"${txSearch}" 검색 결과가 없어요</p></div>`
-      : `<div class="empty"><div class="icon">${t==='personal'?'👤':'👥'}</div><p>해당 내역이 없어요</p></div>`;
+      ? `<div class="empty"><div class="icon">${gi('🔍')}</div><p>"${txSearch}" 검색 결과 없음</p></div>`
+      : `<div class="empty"><div class="icon">${gi(t==='personal'?'👤':'👥')}</div><p>내역 없음</p></div>`;
     return;
   }
 
@@ -2223,7 +2304,7 @@ function renderTx(t) {
     const isInc = txFilter==='income';
     const total = filtered.reduce((s,x)=>s+x.amount, 0);
     let html = `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 8px;border-bottom:2px solid var(--border);margin-bottom:4px;">
-      <span style="font-weight:600">${isInc?'📈 수입':'📉 지출'}</span>
+      <span style="font-weight:600">${isInc?gi('📈')+' 수입':gi('📉')+' 지출'}</span>
       <span style="font-variant-numeric:tabular-nums;font-size:13px;color:${isInc?'var(--ok)':'var(--danger)'}">${isInc?'+':''}${fmt(total)}</span>
     </div>`;
     html += renderByDate(filtered);
@@ -2246,18 +2327,18 @@ function renderTx(t) {
     const subBtnCls = (d) => `txftab${dirSub===d?' active '+actCls2:''}`;
     let html = `<div style="padding:10px 0 8px;border-bottom:2px solid var(--border);margin-bottom:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-weight:600">${cat.emoji||'❓'} ${catName}</span>
+        <span style="font-weight:600">${gi(cat.emoji||'❓')} ${catName}</span>
         <span style="font-variant-numeric:tabular-nums;font-size:13px;color:${net<0?'var(--ok)':'var(--text)'}">${net<0?'+'+fmt(totalInc-totalExp):fmt(net)}</span>
       </div>
       <div style="display:flex;gap:6px;font-size:12px">
         <button class="${subBtnCls('all')}"     onclick="setTxFilter('cat:${catName}')">전체</button>
-        <button class="${subBtnCls('income')}"  onclick="setTxFilter('cat:${catName}:income')">📈 수입 +${fmt(totalInc)}</button>
-        <button class="${subBtnCls('expense')}" onclick="setTxFilter('cat:${catName}:expense')">📉 지출 ${fmt(totalExp)}</button>
+        <button class="${subBtnCls('income')}"  onclick="setTxFilter('cat:${catName}:income')">${gi('📈')} 수입 +${fmt(totalInc)}</button>
+        <button class="${subBtnCls('expense')}" onclick="setTxFilter('cat:${catName}:expense')">${gi('📉')} 지출 ${fmt(totalExp)}</button>
       </div>
     </div>`;
     html += catFiltered.length
       ? renderByDate(catFiltered)
-      : `<div class="empty"><div class="icon">📭</div><p>해당 내역이 없어요</p></div>`;
+      : `<div class="empty"><div class="icon">${gi('📭')}</div><p>내역 없음</p></div>`;
     el.innerHTML = html;
     return;
   }
@@ -2295,14 +2376,10 @@ function renderSettle(t) {
   .map(({c, bud, sp, inc, net, diff}) => {
     const isIncomeSurplus = net < 0;
     const diffCls = diff===null?'':diff>=0?'plus':'minus';
-    const typeBadge = c.budgetType==='none' ? ''
-      : c.budgetType==='fixed'
-        ? `<span class="srow-type fixed">고정</span>`
-        : `<span class="srow-type avg">평균</span>`;
     const netColor = isIncomeSurplus?'var(--ok)':Math.max(0,net)>bud&&bud>0?'var(--danger)':'var(--text)';
     return `<div class="srow">
       <div class="srow-dot" style="background:${c.color}"></div>
-      <div class="srow-name">${c.emoji} ${c.name}${typeBadge}</div>
+      <div class="srow-name">${gi(c.emoji)}<span class="srow-nm-txt">${c.name}</span></div>
       <div class="srow-budget">${bud>0?fmt(bud):'-'}</div>
       <div class="srow-net" style="color:${netColor}">${isIncomeSurplus?'+'+fmt(Math.abs(net)):fmt(net)}</div>
       <div class="srow-diff ${diffCls}">${diff!==null?fmtDiff(diff):'-'}</div>
@@ -2360,7 +2437,7 @@ function renderAssets() {
   .map(({a, r}) => {
     const ms = getMs();
     const isManual = (ms.assets||{})[a.id] !== undefined;
-    const openingLabel = isManual ? '📌 월초 잔액' : '🔄 전월 이월';
+    const openingLabel = isManual ? `${gi('📌')} 월초 잔액` : `${gi('🔄')} 전월 이월`;
 
     // 이번달 적립 내역 목록 (지출)
     const depTxs = S.txs.filter(x =>
@@ -2393,7 +2470,7 @@ function renderAssets() {
 
     return `<div class="asset-card" style="flex-direction:column;align-items:stretch;gap:0;">
       <div style="display:flex;align-items:center;gap:12px;">
-        <div class="asset-icon" style="background:${a.color}22">${a.emoji}</div>
+        <div class="asset-icon">${giL(a.emoji)}</div>
         <div class="asset-body">
           <div class="asset-name">${a.name}</div>
           <div class="asset-sub" style="display:flex;gap:6px;margin-top:2px;flex-wrap:wrap;">
@@ -2405,7 +2482,7 @@ function renderAssets() {
         <div class="asset-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
           <div style="font-size:10px;color:var(--muted);margin-bottom:-4px;">현재 잔액</div>
           <div class="asset-bal" style="color:${a.color}">${fmt(r.balance)}</div>
-          <button onclick="openLiquidate('${a.id}')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1.5px solid ${a.color};color:${a.color};background:${a.color}14;cursor:pointer;">매도</button>
+          <button onclick="openLiquidate('${a.id}')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:var(--radius-sm);border:1.5px solid var(--border);color:var(--text);background:var(--s2);cursor:pointer;">매도</button>
         </div>
       </div>
     </div>`;
@@ -2422,10 +2499,10 @@ function renderAssets() {
   if (totalBal === 0 && totalDeposited === 0) {
     document.getElementById('asset-list').innerHTML = `
       <div style="text-align:center;padding:40px 20px;color:var(--muted);">
-        <div style="font-size:48px;margin-bottom:14px;">🏦</div>
-        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;">등록된 잔액이 없어요</div>
+        <div style="font-size:44px;margin-bottom:14px;">${gi('🏦')}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;">등록된 잔액 없음</div>
         <div style="font-size:13px;line-height:1.6;margin-bottom:20px;">
-          코인·주식·적금 잔액을 여기서 추적해요.<br>
+          코인·주식·적금 잔액을 이곳에서 추적합니다.<br>
           설정 탭에서 월초 잔액을 입력하면 바로 보여요.
         </div>
         <button onclick="switchMain('settings')"
@@ -2496,17 +2573,17 @@ function renderBudgetSection(type) {
           <span style="font-size:13px; font-weight:600;">원</span>
         </div>
         <details style="margin-top:12px;">
-          <summary style="font-size:11px; color:var(--muted); cursor:pointer; outline:none; font-weight:500;">⚙️ 고급 설정</summary>
+          <summary style="font-size:11px; color:var(--muted); cursor:pointer; outline:none; font-weight:500;">${gi('⚙️')} 고급 설정</summary>
           <div style="padding-top:14px; margin-top:8px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:16px;">
             <div>
-              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">📅 누적 개월 수</div>
+              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">${gi('📅')} 누적 개월 수</div>
               <div style="display:flex; align-items:center; gap:6px;">
                 <input type="number" class="sinp" style="width:60px; text-align:center; padding:6px;" value="${c.seedMonths||''}" placeholder="0" onchange="updCatField('${type}',${i},'seedMonths',this.value)">
                 <span style="font-size:12px; color:var(--text);">개월</span>
               </div>
             </div>
             <div>
-              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">🎯 이번 달 조정</div>
+              <div style="font-size:12px; font-weight:600; margin-bottom:4px;">${gi('🎯')} 이번 달 조정</div>
               <div style="display:flex; align-items:center; gap:6px;">
                 <input type="text" inputmode="numeric" class="sinp sinp-comma-adj" style="width:160px; color:${adjColor}; border-color:${adjVal?adjColor:'var(--border)'}" value="${adjVal ? (adjVal>0?'+':'')+adjVal.toLocaleString('ko-KR') : ''}" placeholder="예: +50,000" data-type="${type}" data-cat="${c.name}">
                 <span style="font-size:12px; color:var(--muted);">원</span>
@@ -2517,19 +2594,19 @@ function renderBudgetSection(type) {
       </div>`;
     }
 
-    const delBtn=`<button class="cat-del-btn" onclick="delCat('${type}',${i})" title="카테고리 삭제">✕</button>`;
+    const delBtn=`<button class="cat-del-btn" onclick="delCat('${type}',${i})" title="카테고리 삭제">${gi('✕')}</button>`;
     const typeBtn=isNone
-      ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid var(--g4);color:var(--g5);background:var(--g1)">🚫 예산없음</span>`
+      ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--radius-sm);border:1px solid var(--g4);color:var(--g5);background:var(--g1)">${gi('🚫')} 예산없음</span>`
       : `<div class="brow-typeseg">
-           <button class="brow-typeseg-btn fixed ${isFixed?'active':''}" onclick="setBudgetType('${type}',${i},'fixed')">📌 고정</button>
-           <button class="brow-typeseg-btn avg ${!isFixed?'active':''}" onclick="setBudgetType('${type}',${i},'avg')">📊 평균</button>
+           <button class="brow-typeseg-btn fixed ${isFixed?'active':''}" onclick="setBudgetType('${type}',${i},'fixed')">${gi('📌')} 고정</button>
+           <button class="brow-typeseg-btn avg ${!isFixed?'active':''}" onclick="setBudgetType('${type}',${i},'avg')">${gi('📊')} 평균</button>
          </div>`;
     const hasBudget = !isNone && bud > 0;
     const badgeStyle = hasBudget ? '' : 'background:transparent;color:var(--muted);font-weight:normal;opacity:.6;';
     const badgeText  = isNone ? '예산없음' : (bud > 0 ? fmt(bud) : '예산 미입력');
     return `<div class="brow">
       <div class="brow-top" style="margin-bottom:0;">
-        <span class="brow-name" style="font-size:14px;">${c.emoji} ${c.name}</span>
+        <span class="brow-name" style="font-size:14px;">${gi(c.emoji)} ${c.name}</span>
         ${typeBtn}
         <span class="brow-result ${col} budget-badge" style="${badgeStyle}" data-type="${type}" data-cat="${c.name}" title="당월 확정 예산">${badgeText}</span>
         ${delBtn}
@@ -2575,7 +2652,7 @@ async function delUserAsset(id) {
   // 관련 월초 잔액 제거
   Object.values(S.ms).forEach(m=>{ if(m.assets) delete m.assets[id]; });
   save();renderAssetSettings();renderAssets();renderTxFilter();
-  showToast(`${a.emoji} ${a.name} 자산을 삭제했습니다`,'error');
+  showToast(`${a.name} 자산을 삭제했습니다`,'error');
 }
 
 function renderAssetSettings() {
@@ -2588,15 +2665,15 @@ function renderAssetSettings() {
     const bal = getAssetBal(a.id);
     return `<div class="sr" style="align-items:flex-start;flex-direction:column;gap:6px;padding:14px 0">
       <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
-        <span class="sl2">${a.emoji} ${a.name}</span>
-        <button onclick="delUserAsset('${a.id}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px 6px;margin-left:4px;" title="삭제">✕</button>
+        <span class="sl2">${gi(a.emoji)} ${a.name}</span>
+        <button onclick="delUserAsset('${a.id}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px 6px;margin-left:4px;" title="삭제">${gi('✕')}</button>
         <div style="text-align:right">
           <div style="font-variant-numeric:tabular-nums;font-size:14px;font-weight:600">${fmt(bal.balance)}</div>
           <div style="font-size:10px;color:var(--muted)">당월 현재 잔액 → 다음달 월초 자동이월</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;width:100%">
-        <span style="font-size:11px;color:var(--muted);flex:1">${isManual?'📌 수동입력':'🔄 전월 자동이월'} 이번달 월초 ${fmt(opening)}</span>
+        <span style="font-size:11px;color:var(--muted);flex:1">${isManual?gi('📌')+' 수동입력':gi('🔄')+' 전월 자동이월'} 이번달 월초 ${fmt(opening)}</span>
         <input type="text" inputmode="numeric" class="sinp sinp-comma-asset" style="width:120px" id="set-asset-${a.id}"
           data-assetid="${a.id}"
           placeholder="직접입력(선택)"
@@ -2608,7 +2685,7 @@ function renderAssetSettings() {
   // 자산 추가 폼
   const addForm = `
     <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">＋ 자산 추가</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> 자산 추가</div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <input id="new-asset-emoji" class="emoji-inp" placeholder="💰" maxlength="2" style="width:44px;text-align:center;">
         <input id="new-asset-name" class="fi" placeholder="자산 이름 (예: 적금)" style="flex:1;min-width:100px;padding:8px 10px;font-size:13px;">
@@ -2773,7 +2850,7 @@ function setDirection(dir) {
   const selCls = mType==='personal'?'sp':'sj';
   const catSrc = cats(mType);
   document.getElementById('chips').innerHTML = catSrc.map(c=>
-    `<div class="chip${_editId&&c.name===mCat?' '+selCls:''}" data-cat="${c.name}" onclick="selCat('${c.name}',this,'${selCls}')">${c.emoji} ${c.name}</div>`
+    `<div class="chip${_editId&&c.name===mCat?' '+selCls:''}" data-cat="${c.name}" onclick="selCat('${c.name}',this,'${selCls}')">${gi(c.emoji)} ${c.name}</div>`
   ).join('');
   document.getElementById('asset-fg').style.display='none';
   updatePaymentNote();
@@ -2831,7 +2908,7 @@ function openEditModal(id) {
   if (mAssetId && tx.category === SAVINGS_CAT && mDir === 'expense') {
     document.getElementById('asset-fg').style.display = 'block';
     document.getElementById('asset-chips').innerHTML = S.userAssets.map(a =>
-      `<div class="chip${a.id===mAssetId?' sp':''}" onclick="selAsset('${a.id}',this)">${a.emoji} ${a.name}</div>`
+      `<div class="chip${a.id===mAssetId?' sp':''}" onclick="selAsset('${a.id}',this)">${gi(a.emoji)} ${a.name}</div>`
     ).join('');
   }
 
@@ -2857,7 +2934,7 @@ function setType(t) {
   const selCls=t==='personal'?'sp':'sj';
   const catSrc2 = cats(t);
   document.getElementById('chips').innerHTML=catSrc2.map(c=>
-    `<div class="chip${_editId&&c.name===mCat?' '+selCls:''}" data-cat="${c.name}" onclick="selCat('${c.name}',this,'${selCls}')">${c.emoji} ${c.name}</div>`
+    `<div class="chip${_editId&&c.name===mCat?' '+selCls:''}" data-cat="${c.name}" onclick="selCat('${c.name}',this,'${selCls}')">${gi(c.emoji)} ${c.name}</div>`
   ).join('');
   updatePaymentNote();
   updateTxPreview();
@@ -2885,7 +2962,7 @@ function selCat(name,el,cls) {
   if (name===SAVINGS_CAT && mType==='personal' && mDir==='expense') {
     assetFg.style.display='block';
     document.getElementById('asset-chips').innerHTML = S.userAssets.map(a=>
-      `<div class="chip" onclick="selAsset('${a.id}',this)">${a.emoji} ${a.name}</div>`
+      `<div class="chip" onclick="selAsset('${a.id}',this)">${gi(a.emoji)} ${a.name}</div>`
     ).join('');
   } else {
     assetFg.style.display='none';
@@ -2948,7 +3025,7 @@ function openLiquidate(assetId) {
   _liqPayment = 'account';
   const a = S.userAssets.find(x=>x.id===assetId);
   const r = getAssetBal(assetId);
-  document.getElementById('liq-title').textContent = `${a.emoji} ${a.name} 현금화`;
+  document.getElementById('liq-title').textContent = `${a.name} 현금화`;
   document.getElementById('liq-amount').value = '';
   document.getElementById('liq-desc').value = `${a.name} 매도`;
   document.getElementById('liq-date').value = todayStr();
@@ -3011,7 +3088,7 @@ function saveLiquidate() {
   save();
   bsClose('mo-liquidate');
   render();
-  showToast(`${(a||{}).emoji||'💰'} ${(a||{}).name||'자산'} 매도 완료`, 'success');
+  showToast(`${(a||{}).name||'자산'} 매도 완료`, 'success');
 }
 
 document.getElementById('mo-liquidate').addEventListener('click', e => {
@@ -3190,7 +3267,7 @@ function updateSyncUI(lastSyncTime) {
   } else {
     loginView.style.display = 'block';
     connView.style.display = 'none';
-    if (chip) { chip.classList.remove('connected'); chip.innerHTML = '<span id="gsync-chip-ico">⟲</span>'; }
+    if (chip) { chip.classList.remove('connected'); chip.innerHTML = `<span id="gsync-chip-ico">${gi('🔄')}</span>`; }
   }
 }
 
@@ -3239,12 +3316,12 @@ function _renderFavBarFor(type, barId) {
   if (!bar) return;
   const favs = (S.favs || []).filter(f => f.type === type);
   if (!favs.length) {
-    bar.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:4px 0;">아직 즐겨찾기가 없어요. 오른쪽 편집을 눌러 추가해보세요.</div>`;
+    bar.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:4px 0;">즐겨찾기 없음 · 오른쪽 편집에서 추가</div>`;
     return;
   }
   bar.innerHTML = favs.map(f =>
     `<div class="fav-btn" onclick="openModalWithFav('${f.id}')">
-      <div class="fav-btn-emoji">${f.emoji||'⭐'}</div>
+      <div class="fav-btn-emoji">${giL(f.emoji||'⭐')}</div>
       <div class="fav-btn-label">${f.label}</div>
       <div class="fav-btn-amt">${f.category}</div>
     </div>`
@@ -3269,7 +3346,7 @@ function openFavEdit(initType) {
   document.getElementById('fav-new-label').value = '';
   // 타이틀에 개인/공동 표시
   const titleEl = document.getElementById('fav-edit-title');
-  if (titleEl) titleEl.textContent = _favType === 'joint' ? '⭐ 즐겨찾기 관리 (공동)' : '⭐ 즐겨찾기 관리 (개인)';
+  if (titleEl) titleEl.textContent = _favType === 'joint' ? '즐겨찾기 관리 (공동)' : '즐겨찾기 관리 (개인)';
   renderFavNewChips();
   renderFavList();
   bsOpen('mo-fav-edit');
@@ -3283,7 +3360,7 @@ function closeFavEdit(e) {
 function renderFavNewChips() {
   const list = cats(_favType);
   document.getElementById('fav-new-chips').innerHTML = list.map(c =>
-    `<div class="chip${_favCat===c.name?' sp':''}" onclick="favSelCat('${c.name}',this)">${c.emoji} ${c.name}</div>`
+    `<div class="chip${_favCat===c.name?' sp':''}" onclick="favSelCat('${c.name}',this)">${gi(c.emoji)} ${c.name}</div>`
   ).join('');
 }
 
@@ -3321,14 +3398,14 @@ function renderFavList() {
   // 현재 열린 type의 즐겨찾기만 표시
   const list = (S.favs || []).filter(f => f.type === _favType);
   if (!list.length) {
-    area.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">아직 즐겨찾기가 없어요.<br>위에서 추가해 보세요!</div>`;
+    area.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">즐겨찾기 없음<br>위에서 추가하세요</div>`;
     return;
   }
   area.innerHTML = `<div style="font-size:13px;font-weight:700;margin-bottom:10px;">등록된 즐겨찾기 (${list.length}개)</div>` +
     list.map((f) => {
       const globalIdx = S.favs.indexOf(f);
       return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border-radius:12px;margin-bottom:8px;">
-        <div style="font-size:24px;">${f.emoji||'⭐'}</div>
+        <div style="font-size:24px;">${giL(f.emoji||'⭐')}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:600;font-size:14px;">${f.label}</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px;">${f.category}</div>
@@ -3337,7 +3414,7 @@ function renderFavList() {
           <button onclick="moveFav(${globalIdx},-1)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:12px;color:var(--muted);">↑</button>
           <button onclick="moveFav(${globalIdx},1)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:12px;color:var(--muted);">↓</button>
         </div>
-        <button onclick="delFav('${f.id}')" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:4px;">🗑</button>
+        <button onclick="delFav('${f.id}')" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:4px;">${gi('🗑')}</button>
       </div>`;
     }).join('');
 }
