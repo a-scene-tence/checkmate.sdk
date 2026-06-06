@@ -300,6 +300,21 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.7 [2026-06-06] 29cm 에디토리얼 리디자인을 AiT 개발용에 적용 (Vercel 개발용과 디자인 일치)
+
+**배경** (의사결정 기록): "vercel 개발용"(`claude/main-29cm-redesign`)에만 적용돼 있던 29cm 리디자인을 "앱인토스 개발용"(`claude/ait-fix-json-export`)에도 적용 요청. AiT 개발용은 AiT 빌드 파이프라인 + JSON 내보내기 WebView 수정(§7.6)은 갖췄으나 구 디자인(NanumSquareNeo·블루/퍼플·이모지)에 머물러 있었음.
+
+**결정/방침**:
+- **시각 시스템만** 이식하고 AiT 고유 콘텐츠/기능(온보딩 마법사, 내보내기 수정)은 **보존**. Google 동기화는 **미포함**(로컬 전용 유지).
+- 두 stylesheet가 선택자 평행 구조라 redesign의 CSS 블록을 통째 이식(차콜 토큰·플랫·라디우스), `#text-modal-*`(내보내기 모달)만 보존·정합.
+- 이모지는 **비파괴 원칙**으로 렌더 시점에 `gi()`/`giL()`이 모노크롬 라인 아이콘으로 매핑(로컬스토리지 `emoji` 필드 불변). 정적 장식 이모지는 제거, 기능 이모지는 인라인 `<svg class="ic">`.
+
+**수행**: 폰트 NanumSquareNeo→Pretendard(`<link>`) → `:root` 차콜 토큰 + `.ic`/`.ic-lg` + `ICON`/`E2I`/`gi`/`giL` 이식 → 렌더 사이트 `${…emoji}`→`gi()/giL()` + 자산/거래 컬러 타일 제거 + 결산행 typeBadge 제거 → 정적 이모지 정리(라인 아이콘/텍스트) → 내보내기·복원 UI 디자인 정합 → 하드코딩 색 스윕(#5555AA/#9CA3AF/그라데이션→토큰) → SW v4→v10 → `docs/design.md` 추가 + spec/CLAUDE 동기화. 검증: 정적 서버 + Playwright 스모크(라인 아이콘 170개, 가시 이모지 0, JS 페이지 에러 0).
+
+**예방책**: AiT/Vercel 두 "개발용"은 같은 `html/index.html` 디자인 시스템을 공유해야 하므로, 한쪽 디자인 변경 시 다른 쪽도 동기화하거나 단일 소스로 머지 정책을 명확히 할 것. 신규 이모지 추가 시 `E2I` 매핑도 함께 확장.
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:

@@ -19,7 +19,7 @@
 | 배포 플랫폼 | Vercel (자동 배포) |
 | 소스 위치 | `checkmate.sdk/html/` |
 | 라이선스 | (미정) |
-| 마지막 업데이트 | 2026-05-21 |
+| 마지막 업데이트 | 2026-06-06 |
 
 ---
 
@@ -31,7 +31,7 @@
 - **데이터 저장**: 브라우저 로컬스토리지만 사용 (외부 서버 연동 없음)
 - **백업**: 사용자가 수동으로 JSON 내보내기/복원 (공유 시트·파일 다운로드·텍스트 복사·붙여넣기 복원)
 - **외부 의존성** (CDN 단수):
-  - NanumSquareNeo 웹폰트 (`cdn.jsdelivr.net/gh/moonspam/NanumSquareNeo`)
+  - Pretendard 웹폰트 (`cdn.jsdelivr.net/gh/orioncactus/pretendard`) — 2026-06-06 NanumSquareNeo에서 교체 (29cm 에디토리얼 리디자인)
 
 > 📜 이전에는 Supabase OAuth(Google) + Google Drive 백업이 있었으나, 2026-05-21에 완전 제거됨. 자세한 사유는 [`CLAUDE.md`](./CLAUDE.md) § 7.3 참조.
 
@@ -133,12 +133,12 @@ Vercel 배포 설정:
 ```
 
 ### 6.2 Service Worker (`sw.js`)
-- **현재 캐시 버전**: `checkmate-v3` (2026-05-21에 v2 → v3 증가 — 구구글 제거 자산 강제 무효화)
+- **현재 캐시 버전**: `checkmate-v10` (2026-06-06에 v4 → v10 증가 — 29cm 리디자인+라인 아이콘 적용으로 캐시 강제 갱신)
 - **캐시 전략**: Network First + Cache Fallback
 - **코어 자산** (설치 시 필수 캐시, 실패 시 설치 중단):
   - `index.html`, `manifest.json`, 아이콘들
 - **선택 자산** (실패해도 설치 계속): apple-touch-icon
-- **외부 CDN** (NanumSquareNeo 폰트): 네트워크 우선 → 실패 시 캐시
+- **외부 CDN** (Pretendard 폰트): 네트워크 우선 → 실패 시 캐시
 - **로컬 자산**: 네트워크 시도 → 실패 시 캐시 반환
 - **오프라인 지원**: 캐시된 자산은 오프라인 접근 가능
 
@@ -174,6 +174,8 @@ Vercel 배포 설정:
 | 2026-05-23 | UX 온보딩 1단계: 자산 Empty state, 결제수단 2-열 시각화, 거래 실시간 잔고 미리보기, 설정 탭 카드 번호화·여유자금 미리보기·신규 가이드, 카테고리 행 세그먼트 컨트롤·자연어 고급 설정 | #6 |
 | 2026-05-23 | UX 온보딩 2단계: 요약 탭 여유자금 부제·계산식 힌트, 결산 탭 순지출·남음 라벨 평이화 + 설명 note, 자산 카드 현재 잔액 라벨, 내역 탭 빈 상태 CTA 보완·필터 라벨 추가 | #7 |
 | 2026-05-23 | UX 온보딩 3단계: 수입 모드 금액 placeholder 모순 수정, 적금 항목 라벨 + 자산 적립 안내, 매도 목적지 라벨 명확화, 백업 복원 덮어쓰기 경고 가시화, 요약 탭 계산식 힌트 위치 조정 | #8 |
+| 2026-06-01 | AiT WebView JSON 내보내기 미동작 수정: `exportData()` 환경 인지형(navigator.share→다운로드→텍스트복사 모달), 텍스트 붙여넣기 복원(`openRestoreModal`/`restoreFromJSON`) 추가, SW v4 | — |
+| 2026-06-06 | 29cm 에디토리얼 리디자인 적용(Vercel 개발용과 디자인 일치): NanumSquareNeo→Pretendard, 모노크롬+차콜 토큰, 플랫(헤어라인), 이모지→모노크롬 라인 아이콘(`ICON`/`E2I`/`gi`/`giL`), 자산/거래 컬러 타일 제거, 칩·필터탭 라디우스 샤프닝, 내보내기/복원 UI 디자인 정합, `docs/design.md` 추가, SW v10 | — |
 
 ---
 
