@@ -138,12 +138,12 @@ Vercel 배포 설정:
 ```
 
 ### 6.2 Service Worker (`sw.js`)
-- **현재 캐시 버전**: `checkmate-v6` (2026-06-03에 v5 → v6 증가 — 전문가용 UI 전환으로 캐시 강제 갱신)
+- **현재 캐시 버전**: `checkmate-v9` (2026-06-06에 v8 → v9 증가 — 이모지→라인 아이콘 전환으로 캐시 강제 갱신)
 - **캐시 전략**: Network First + Cache Fallback
 - **코어 자산** (설치 시 필수 캐시, 실패 시 설치 중단):
   - `index.html`, `manifest.json`, 아이콘들
 - **선택 자산** (실패해도 설치 계속): apple-touch-icon
-- **외부 CDN** (NanumSquareNeo 폰트): 네트워크 우선 → 실패 시 캐시
+- **외부 CDN** (Pretendard 폰트): 네트워크 우선 → 실패 시 캐시
 - **로컬 자산**: 네트워크 시도 → 실패 시 캐시 반환
 - **오프라인 지원**: 캐시된 자산은 오프라인 접근 가능
 
@@ -182,6 +182,8 @@ Vercel 배포 설정:
 | 2026-05-28 | Google 동기화 재도입 (`feature/google-sync`): GIS OAuth 2.0 + Google Drive appDataFolder 자동 동기화, Supabase 미사용, main 브랜치와 분리 관리 | — |
 | 2026-06-03 | 전문가용 UI 전환: 온보딩 마법사·가이드 카드·계산식 힌트·자연어 설명 제거, 빈 화면 최소 CTA 유지, 설정 카드 ①②③ 스텝 라벨, SW 캐시 v6 | — |
 | 2026-06-05 | 29cm 에디토리얼 전면 리디자인: NanumSquareNeo→Pretendard, 모노크롬+차콜 포인트 토큰, 플랫(헤어라인/그림자 제거), 개인·공동 색 구분 제거, 데이터 도트 뮤트화, `docs/design.md` 신설, SW 캐시 v7 | — |
+| 2026-06-05 | 자산 카드 월초잔액 잘림 수정(`.asset-sub` flex-wrap), 결산 차이 열 줄바꿈 수정(그리드 80px + nowrap), SW 캐시 v8 | — |
+| 2026-06-06 | 이모지→모노크롬 라인 아이콘 전환(ICON/E2I/gi/giL 레지스트리 35개 슬러그), 자산/거래 컬러 타일 제거, 칩·필터탭·타입배지 라디우스 샤프닝(pill→4px), 마이크로카피 선언형 어조 정리, SW 캐시 v9 | — |
 
 ---
 
