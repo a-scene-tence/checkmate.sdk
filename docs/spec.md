@@ -30,8 +30,9 @@
 - **인증**: Google Identity Services (GIS) OAuth 2.0 — `feature/google-sync` 브랜치 한정
 - **데이터 저장**: 브라우저 로컬스토리지 + Google Drive appDataFolder 동기화 (`feature/google-sync` 한정)
 - **백업**: Google Drive 자동 동기화 (30초 debounce) + 수동 JSON 내보내기/복원
+- **디자인 시스템**: 29cm 에디토리얼(모노크롬 + 차콜 포인트) — 상세 [`design.md`](./design.md)
 - **외부 의존성** (CDN):
-  - NanumSquareNeo 웹폰트 (`cdn.jsdelivr.net/gh/moonspam/NanumSquareNeo`)
+  - Pretendard 웹폰트 (`cdn.jsdelivr.net/gh/orioncactus/pretendard`) — 2026-06-05 NanumSquareNeo에서 교체
   - Google Identity Services (`accounts.google.com/gsi/client`) — `feature/google-sync` 한정
 
 > 📜 이전에는 Supabase OAuth(Google) + Google Drive 백업이 있었으나, 2026-05-21에 완전 제거됨(§ 7.3). 이후 2026-05-28에 Supabase 없이 GIS 직접 연동으로 재도입 — `feature/google-sync` 브랜치 전용. `main` 브랜치는 여전히 로컬 전용.
@@ -180,6 +181,7 @@ Vercel 배포 설정:
 | 2026-05-23 | UX 온보딩 3단계: 수입 모드 금액 placeholder 모순 수정, 적금 항목 라벨 + 자산 적립 안내, 매도 목적지 라벨 명확화, 백업 복원 덮어쓰기 경고 가시화, 요약 탭 계산식 힌트 위치 조정 | #8 |
 | 2026-05-28 | Google 동기화 재도입 (`feature/google-sync`): GIS OAuth 2.0 + Google Drive appDataFolder 자동 동기화, Supabase 미사용, main 브랜치와 분리 관리 | — |
 | 2026-06-03 | 전문가용 UI 전환: 온보딩 마법사·가이드 카드·계산식 힌트·자연어 설명 제거, 빈 화면 최소 CTA 유지, 설정 카드 ①②③ 스텝 라벨, SW 캐시 v6 | — |
+| 2026-06-05 | 29cm 에디토리얼 전면 리디자인: NanumSquareNeo→Pretendard, 모노크롬+차콜 포인트 토큰, 플랫(헤어라인/그림자 제거), 개인·공동 색 구분 제거, 데이터 도트 뮤트화, `docs/design.md` 신설, SW 캐시 v7 | — |
 
 ---
 

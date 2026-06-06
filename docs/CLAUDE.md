@@ -1,7 +1,7 @@
 # CLAUDE.md — checkmate.sdk 작업 규칙
 
 > 본 문서는 Claude(또는 모든 작업자)가 `checkmate.sdk` 리포지토리에서 작업할 때 따라야 할 규칙과 누적 학습 기록입니다.
-> 작업 시작 전 반드시 본 문서와 [`spec.md`](./spec.md), [`sdk-spec.md`](./sdk-spec.md)를 읽고 시작하세요.
+> 작업 시작 전 반드시 본 문서와 [`spec.md`](./spec.md), [`sdk-spec.md`](./sdk-spec.md), [`design.md`](./design.md)를 읽고 시작하세요.
 
 ---
 
@@ -323,6 +323,22 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.8 [2026-06-05] 29cm 에디토리얼 리디자인 — 폰트/토큰 전면 교체
+
+**배경** (의사결정 기록): Toss 스타일(블루/퍼플, 라운드, 그림자)에서 **29cm 스타일**(모노크롬 + 차콜 포인트, 플랫, 에디토리얼)로 전체 재편성. 디자인 시스템은 신규 `docs/design.md`로 관리.
+
+**결정**:
+- 컬러: 모노크롬 + 포인트 1개 = 차콜 `#111111`. 기능색(수입 그린/위험 레드/경고 오렌지)만 유지.
+- 폰트: NanumSquareNeo → **Pretendard** (`@import` 제거, `<head>` `<link>`로 비차단 로드).
+- 개인/공동 색 구분 제거 → 라벨·굵기로만 구분(`--p`·`--j` 모두 차콜로 리맵).
+- 플랫: `--shadow:none`, 헤어라인 보더, 카드 호버 리프트 제거, radius 20→8.
+
+**수행**: `:root` 토큰 리맵(키스톤) → 컴포넌트 CSS 재스타일 → 하드코딩 색/그라데이션 스윕 → 숫자 Arial→tabular-nums → SW v6→v7 → `design.md` 신설 + spec/CLAUDE 동기화.
+
+**교훈/예방책**: **`var()` 토큰 리맵이 인라인 `var(--p)` 사용처(~49곳)를 자동 변환하지만, 하드코딩 hex(약 30개: 예산타입 배지 #5555AA/#F0F0FF, 자산 그라데이션 #1A3A5C/#2D5016, 토스트, 데이터 팔레트 등)는 변환되지 않아 수동 스윕 필요.** 향후 신규 스타일은 반드시 토큰(`var(--*)`)을 사용하고 hex 직접 입력 금지. 색 변경 시 `grep "#[0-9A-Fa-f]{6}"`로 잔존 확인. 데이터 식별색(카테고리/자산 도트)은 `design.md §10`의 유일한 예외.
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
@@ -336,6 +352,8 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 | 개인정보 정책 변경 | `docs/spec.md` §7, `html/privacy.html` |
 | `vercel.json` 변경 | `docs/spec.md` §4, `docs/CLAUDE.md` §5 |
 | 외부 의존성 추가 (CDN, 서비스) | `docs/spec.md` §2, `docs/CLAUDE.md` §3.1 검토 |
+| 디자인 토큰/컴포넌트 스타일 변경 | `docs/design.md` (해당 섹션) |
+| 외부 폰트(CDN) 변경 | `docs/spec.md` §2 + `docs/design.md` §3 |
 | 외부 인증/저장 서비스 재도입 | 독립 PR + 사용자 승인 필수 → 본 문서 전면 갱신 |
 | `src/` 컴포넌트/로직 변경 | `docs/sdk-spec.md` §3, §7 |
 | `package.json` dependency 변경 | `docs/sdk-spec.md` §2 |
