@@ -786,7 +786,7 @@ details[open].detail-box summary::after { content: " ▲"; }
     </div>
     <div class="card" style="margin-bottom:80px">
       <div class="ctitle">데이터 백업 / 복원</div>
-      <div class="note">내보내기를 누르면 파일로 공유하거나 텍스트로 복사할 수 있어요. 파일 불러오기 또는 복사한 텍스트를 붙여넣어 복원하세요.</div>
+      <div class="note">내보내기를 누르면 JSON 파일이 기기에 저장돼요. 저장한 파일을 불러오거나, 복사한 텍스트를 붙여넣어 복원하세요.</div>
       <button class="btn-outline" onclick="exportData()">JSON으로 내보내기</button>
       <button class="btn-outline" onclick="document.getElementById('import-file').click()">JSON 파일에서 불러오기</button>
       <button class="btn-outline" onclick="openRestoreModal()">텍스트로 복원</button>
@@ -3005,10 +3005,6 @@ function setBudgetType(type, i, newType) {
 //  BACKUP / RESTORE
 // ═══════════════════════════════════════════════
 
-function isDesktopBrowser() {
-  return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-}
-
 async function copyText(text) {
   try {
     await navigator.clipboard.writeText(text);
@@ -3077,11 +3073,40 @@ function restoreFromJSON(text) {
   return true;
 }
 
+// 토스 AiT(Granite) 네이티브 WebView 감지: 네이티브 셸이 주입하는 전역으로 판별.
+// 이 WebView는 <a download>+blob: 다운로드를 지원하지 않으므로(§7.6 회귀 방지) 공유 시트로 분기한다.
+function isAitWebView() {
+  return typeof window !== 'undefined' &&
+    (window.__GRANITE_NATIVE_EMITTER != null || window.__CONSTANT_HANDLER_MAP != null);
+}
+
 async function exportData() {
   const json = JSON.stringify(S, null, 2);
   const fname = `가계부_백업_${todayStr()}.json`;
 
-  // 1) 네이티브 공유 시트 (모바일·WebView): 파일앱 저장·메신저 전송 등
+  // 1) 파일 다운로드 (우선): blob + <a download>로 기기에 .json 파일을 직접 저장.
+  //    데스크톱·모바일 브라우저(Vercel) 모두 동작. 사용자 요청대로 "복사"가 아닌 파일 저장이 기본.
+  //    단, AiT WebView는 blob 다운로드가 조용히 실패하므로 건너뛰고 공유 시트로 저장한다(§7.6).
+  if (!isAitWebView()) {
+    try {
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fname;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      showToast('백업 파일을 저장했어요', 'success');
+      return;
+    } catch(err) {
+      // 다운로드 미지원 환경 → 공유/텍스트 폴백으로 진행
+    }
+  }
+
+  // 2) 폴백: 네이티브 공유 시트로 파일 저장 (AiT WebView 등 다운로드 미지원): 파일앱 저장 등
   try {
     if (navigator.canShare) {
       const file = new File([json], fname, { type: 'application/json' });
@@ -3095,17 +3120,7 @@ async function exportData() {
     // 그 외 오류는 폴백으로 진행
   }
 
-  // 2) 데스크톱 브라우저: 파일 다운로드
-  if (isDesktopBrowser()) {
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = fname; a.click();
-    URL.revokeObjectURL(url);
-    return;
-  }
-
-  // 3) 폴백: 텍스트 복사 모달 (공유 미지원 WebView)
+  // 3) 최종 폴백: 텍스트 복사 모달 (다운로드·공유 모두 미지원)
   openTextModal('백업 데이터 복사', json, true);
 }
 

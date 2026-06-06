@@ -315,6 +315,24 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.8 [2026-06-06] JSON 내보내기 파일 다운로드 우선 전환 (§7.6 보완)
+
+**배경** (요청): 사용자가 "내보내기 클릭 시 텍스트 복사 백업 대신 JSON 파일을 다운로드해 기기에 저장"을 요청. §7.6에서 AiT WebView 미동작을 공유→데스크톱 다운로드→텍스트 복사 순서로 해결했으나, 일반 브라우저(Vercel)에서도 공유 시트가 먼저 뜨거나 환경에 따라 복사 모달이 노출되어 "파일 저장"이 기본이 아니었음.
+
+**충돌 주의**: §7.6은 "AiT RN WebView가 `<a download>`+`blob:`을 조용히 무시"한다고 기록. 따라서 다운로드를 무조건 우선하면 AiT 앱에서 버튼이 다시 먹통(§7.6 회귀). → **환경 분기**로 해결.
+
+**결정/수행**:
+- `isAitWebView()` 추가: 네이티브 셸이 주입하는 `window.__GRANITE_NATIVE_EMITTER`/`window.__CONSTANT_HANDLER_MAP` 전역으로 AiT(Granite) WebView 판별(바닐라 JS, SDK import 불가하므로 전역 감지).
+- `exportData()` 순서: ①일반 브라우저 → `<a download>` blob 파일 다운로드(기본) ②AiT WebView/다운로드 실패 → `navigator.share({files})` 공유 시트(파일앱 저장) ③최종 폴백 → 텍스트 복사 모달.
+- 미사용이 된 `isDesktopBrowser()` 제거. 백업 카드 안내 문구를 "JSON 파일이 기기에 저장돼요"로 갱신. SW v10 → v11.
+
+**한계/예방책**:
+- ⚠️ AiT WebView가 `navigator.canShare({files})`도 거부하면 파일 저장이 불가하여 텍스트 복사로 폴백됨(플랫폼 한계). 진짜 파일 저장이 필요하면 AiT 네이티브 파일 저장 브리지가 필요하나 `@apps-in-toss/web-bridge`에는 미제공(share는 텍스트 전용).
+- ⛔️ §7.6 규칙 유지: AiT WebView 경로에 `<a download>`+`blob:` 사용 금지 — 반드시 `isAitWebView()`로 가드.
+- ✅ 내보내기 동작 변경 시 브라우저(다운로드)·AiT 앱(공유/복사) 양쪽 왕복 테스트.
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
