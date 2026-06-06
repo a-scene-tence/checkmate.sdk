@@ -3029,13 +3029,13 @@ function openTextModal(title, text, isReadonly) {
   const actionBtn = document.getElementById('text-modal-action');
   document.getElementById('text-modal-title').textContent = title;
   if (isReadonly) {
-    document.getElementById('text-modal-note').textContent = '아래 내용을 복사해서 메모·이메일 등에 붙여넣어 보관하세요.';
+    document.getElementById('text-modal-note').textContent = '아래 내용을 전체 복사 → 메모장에 붙여넣기 → 파일명.json으로 저장하면 나중에 "파일에서 불러오기"로 복원할 수 있어요.';
     area.value = text;
     area.readOnly = true;
     actionBtn.textContent = '복사하기';
     actionBtn.onclick = async () => {
       const ok = await copyText(text);
-      showToast(ok ? '백업 내용을 복사했어요. 메모·메일에 붙여넣어 보관하세요.' : '복사에 실패했습니다. 텍스트를 직접 선택해 복사하세요.', ok ? 'success' : 'error', 3500);
+      showToast(ok ? '복사했어요. 메모장에 붙여넣고 .json으로 저장하세요.' : '복사에 실패했습니다. 텍스트를 직접 선택해 복사하세요.', ok ? 'success' : 'error', 3500);
     };
   } else {
     document.getElementById('text-modal-note').textContent = '내보낸 백업 텍스트를 아래에 붙여넣고 복원하기를 누르세요.';
