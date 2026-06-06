@@ -1,4 +1,4 @@
-const CACHE_NAME = 'checkmate-v6';
+const CACHE_NAME = 'checkmate-v7';
 
 // 반드시 존재해야 하는 핵심 자산 (실패 시 설치 중단)
 const CORE_ASSETS = [
