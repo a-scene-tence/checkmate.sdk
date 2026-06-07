@@ -110,7 +110,7 @@
 | `.card` | 화이트 + 헤어라인, radius 8, 패딩 20/18, 그림자 없음 |
 | 기본 버튼 `.bsub` | 차콜 배경 + 화이트, radius 8, weight 700 |
 | 아웃라인 `.btn-outline` | 헤어라인, hover 시 차콜 |
-| 토글 `.tg/.tb` | 그레이 트랙, 활성 = 화이트+헤어라인+weight 700(그림자 없음) |
+| 토글 `.tg/.tb` | 그레이 트랙, 활성 = 화이트+헤어라인+weight 700+**밑줄**(offset 3px, 그림자 없음) |
 | 인풋 `.fi/.sinp` | 화이트 + 헤어라인, radius 4, focus 차콜 보더 |
 | 칩 `.chip` | **radius 4(샤프)**, 미선택 아웃라인 / 선택(`.sp/.sj`) = 차콜 채움+화이트 |
 | 필터탭 `.txftab` | radius 4 |
