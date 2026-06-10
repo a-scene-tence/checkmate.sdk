@@ -180,6 +180,12 @@ main{flex:1;padding:16px;overflow-y:auto;padding-bottom:90px;}
 .fi{width:100%;background:#fff;border:var(--hairline);border-radius:var(--radius-sm);padding:11px 14px;font-family:inherit;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;}
 .fi:focus{border-color:var(--p);}
 .fi.big{font-variant-numeric:tabular-nums!important;font-size:22px!important;}
+/* 금액 수식 입력 보조 (예: 50000-5000 → 45000) */
+.amt-expr{text-align:center;font-size:13px;color:var(--muted);min-height:17px;margin-top:7px;font-variant-numeric:tabular-nums;letter-spacing:.2px;}
+.amt-expr.err{color:var(--danger);}
+.amt-ops{display:flex;justify-content:center;gap:6px;margin-top:8px;}
+.amt-op{min-width:38px;padding:6px 0;font-size:15px;line-height:1;border:var(--hairline);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;transition:all .12s;}
+.amt-op:active{transform:scale(.93);background:var(--s2);}
 .tg{display:flex;background:var(--s2);border-radius:var(--radius);padding:3px;gap:3px;}
 .tb{flex:1;padding:9px 4px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);color:var(--muted);transition:all .15s;border:1px solid transparent;background:none;font-family:inherit;}
 .tb.active{background:#fff;color:var(--text);font-weight:700;border:var(--hairline);box-shadow:none;text-decoration:underline;text-underline-offset:3px;}
@@ -821,6 +827,14 @@ details[open].detail-box summary::after { content: " ▲"; }
 
     <div class="fg" style="margin-bottom:28px;">
       <input type="text" inputmode="numeric" class="fi big" id="inp-amt" placeholder="금액" style="text-align:center; font-size:32px!important; font-weight:700; padding:16px 0; border:none; border-bottom:2px solid var(--p); border-radius:0; background:transparent; color:var(--text);">
+      <div class="amt-expr" id="amt-expr"></div>
+      <div class="amt-ops">
+        <button type="button" class="amt-op" title="빼기 (할인 차감)" onclick="amtOp('-')">−</button>
+        <button type="button" class="amt-op" title="더하기" onclick="amtOp('+')">+</button>
+        <button type="button" class="amt-op" title="곱하기" onclick="amtOp('×')">×</button>
+        <button type="button" class="amt-op" title="나누기" onclick="amtOp('÷')">÷</button>
+        <button type="button" class="amt-op" title="지우기" onclick="amtBackspace()">⌫</button>
+      </div>
     </div>
 
     <div style="display:grid; grid-template-columns:1fr auto; gap:12px; margin-bottom:20px;">
@@ -1335,6 +1349,114 @@ function bindCommaInput(el, onChangeCb) {
     if (onChangeCb) onChangeCb(parseInput(el));
   });
   el.addEventListener('focus', () => { if(!el.value) return; fmtInput(el); });
+}
+
+// ── 금액 수식 입력 (예: "50000-5000" → 45000) ──
+// 카드 할인 등으로 기입력 금액에서 차감이 필요할 때, 금액칸에 사칙연산을 직접 입력.
+// eval 미사용 — 토큰화 후 shunting-yard로 안전 평가. 실패 시 null.
+function evalExpr(str) {
+  const s = (str||'').replace(/[,\s₩]/g,'').replace(/×/g,'*').replace(/÷/g,'/');
+  if (!s) return null;
+  if (!/^[0-9+\-*/().]+$/.test(s)) return null;
+  const toks = s.match(/\d+\.?\d*|[+\-*/()]/g);
+  if (!toks || toks.join('') !== s) return null;
+  const prec = {'+':1,'-':1,'*':2,'/':2};
+  const out = [], ops = [];
+  let prev = null;
+  for (const t of toks) {
+    if (/^\d/.test(t)) { out.push(parseFloat(t)); }
+    else if (t === '(') { ops.push(t); }
+    else if (t === ')') {
+      while (ops.length && ops[ops.length-1] !== '(') out.push(ops.pop());
+      if (!ops.length) return null;
+      ops.pop();
+    } else {
+      // 단항 +/- (식 시작, '(' 또는 다른 연산자 뒤) → 0을 앞에 둠
+      if ((t==='-'||t==='+') && (prev===null || prev==='(' || prev in prec)) out.push(0);
+      while (ops.length && ops[ops.length-1] in prec && prec[ops[ops.length-1]] >= prec[t]) out.push(ops.pop());
+      ops.push(t);
+    }
+    prev = t;
+  }
+  while (ops.length) { const o = ops.pop(); if (o === '(') return null; out.push(o); }
+  const st = [];
+  for (const t of out) {
+    if (typeof t === 'number') { st.push(t); }
+    else {
+      const b = st.pop(), a = st.pop();
+      if (a === undefined || b === undefined) return null;
+      st.push(t==='+'?a+b : t==='-'?a-b : t==='*'?a*b : a/b);
+    }
+  }
+  if (st.length !== 1 || !isFinite(st[0])) return null;
+  return st[0];
+}
+// 값에 사칙연산 기호가 있는지(숫자 뒤 '-' 포함) → 수식 모드 판별
+function hasMathOp(s) { return /[+*/×÷()]/.test(s) || /\d\s*-/.test(s); }
+function updateAmtPreview() {
+  const el = document.getElementById('inp-amt');
+  const pv = document.getElementById('amt-expr');
+  if (!el || !pv) return;
+  if (!hasMathOp(el.value)) { pv.textContent = ''; pv.classList.remove('err'); return; }
+  const r = evalExpr(el.value);
+  if (r === null) { pv.textContent = '계산식을 확인하세요'; pv.classList.add('err'); }
+  else { pv.textContent = '= ' + fmt(Math.round(r)) + (r < 0 ? ' (음수)' : ''); pv.classList.remove('err'); }
+}
+function commitAmtExpr() {
+  const el = document.getElementById('inp-amt');
+  if (!el || !hasMathOp(el.value)) { updateAmtPreview(); return; }
+  const r = evalExpr(el.value);
+  if (r !== null && isFinite(r)) el.value = Math.max(0, Math.round(r)).toLocaleString('ko-KR');
+  updateAmtPreview();
+}
+function bindAmountInput(el) {
+  el.addEventListener('input', () => {
+    // 허용 문자만 유지(숫자·사칙연산·괄호·콤마·공백)
+    const cleaned = el.value.replace(/[^0-9+\-*/×÷().,\s]/g, '');
+    if (cleaned !== el.value) {
+      const drop = el.value.length - cleaned.length;
+      const p = Math.max(0, (el.selectionStart||cleaned.length) - drop);
+      el.value = cleaned;
+      try { el.setSelectionRange(p, p); } catch(e) {}
+    }
+    if (hasMathOp(el.value)) {
+      updateAmtPreview(); // 수식 입력 중에는 콤마 재포맷하지 않음
+    } else {
+      // 일반 숫자: 기존 콤마 포맷 유지(커서 보존)
+      const pos = el.selectionStart;
+      const before = el.value.slice(0, pos).replace(/[^\d]/g,'').length;
+      fmtInput(el);
+      let cnt = 0, i = 0;
+      while (i < el.value.length && cnt < before) { if (/\d/.test(el.value[i])) cnt++; i++; }
+      el.setSelectionRange(i, i);
+      updateAmtPreview();
+    }
+  });
+  el.addEventListener('blur', commitAmtExpr);
+  el.addEventListener('focus', () => { if (el.value && !hasMathOp(el.value)) fmtInput(el); });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commitAmtExpr(); } });
+}
+function insertAtCursor(el, txt) {
+  const s = el.selectionStart ?? el.value.length, e = el.selectionEnd ?? el.value.length;
+  el.value = el.value.slice(0, s) + txt + el.value.slice(e);
+  const np = s + txt.length;
+  try { el.setSelectionRange(np, np); } catch(err) {}
+}
+function amtOp(sym) {
+  const el = document.getElementById('inp-amt');
+  if (!el) return;
+  insertAtCursor(el, sym);
+  el.dispatchEvent(new Event('input'));
+  el.focus();
+}
+function amtBackspace() {
+  const el = document.getElementById('inp-amt');
+  if (!el) return;
+  const s = el.selectionStart, e = el.selectionEnd;
+  if (s === e && s > 0) { el.value = el.value.slice(0, s-1) + el.value.slice(e); try{el.setSelectionRange(s-1, s-1);}catch(x){} }
+  else if (s !== e) { el.value = el.value.slice(0, s) + el.value.slice(e); try{el.setSelectionRange(s, s);}catch(x){} }
+  el.dispatchEvent(new Event('input'));
+  el.focus();
 }
 
 // 설정 화면 예산 입력 이벤트 위임 (renderBudgetSection 재렌더 후에도 항상 동작)
@@ -2863,9 +2985,10 @@ function openModal() {
   _editId = null;
   // 콤마 입력 바인딩 (최초 1회)
   const amtEl = document.getElementById('inp-amt');
-  if (!amtEl._commabound) { bindCommaInput(amtEl); amtEl._commabound = true; }
+  if (!amtEl._exprbound) { bindAmountInput(amtEl); amtEl._exprbound = true; }
   document.getElementById('inp-date').value=todayStr();
   amtEl.value='';
+  document.getElementById('amt-expr').textContent='';
   document.getElementById('inp-desc').value='';
   mCat=null; mAssetId=null; mDir='expense';
   document.getElementById('asset-fg').style.display='none';
@@ -2888,8 +3011,11 @@ function openEditModal(id) {
   mCat = tx.category;           // ← setType 전에 먼저 설정
   mAssetId = tx.assetId || null;
 
+  const amtEl = document.getElementById('inp-amt');
+  if (!amtEl._exprbound) { bindAmountInput(amtEl); amtEl._exprbound = true; }
   document.getElementById('inp-date').value = tx.date;
-  document.getElementById('inp-amt').value = tx.amount ? tx.amount.toLocaleString('ko-KR') : '';
+  amtEl.value = tx.amount ? tx.amount.toLocaleString('ko-KR') : '';
+  document.getElementById('amt-expr').textContent = '';
   document.getElementById('inp-desc').value = tx.desc;
   document.getElementById('dir-exp').classList.toggle('active', mDir==='expense');
   document.getElementById('dir-inc').classList.toggle('active', mDir==='income');
@@ -2976,7 +3102,10 @@ function selAsset(assetId, el) {
 }
 
 function saveTx() {
-  const amt=parseInput(document.getElementById('inp-amt'));
+  const amtRaw=document.getElementById('inp-amt').value.trim();
+  const amtVal=evalExpr(amtRaw);
+  if(amtRaw && amtVal===null) return showToast('금액 계산식을 확인해주세요','warning');
+  const amt=amtVal!==null?Math.round(amtVal):0;
   const desc=document.getElementById('inp-desc').value.trim();
   const date=document.getElementById('inp-date').value;
   if(!amt||amt<=0) return showToast('금액을 입력해주세요','warning');

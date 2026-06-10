@@ -112,6 +112,7 @@
 | 아웃라인 `.btn-outline` | 헤어라인, hover 시 차콜 |
 | 토글 `.tg/.tb` | 그레이 트랙, 활성 = 화이트+헤어라인+weight 700+**밑줄**(offset 3px, 그림자 없음) |
 | 인풋 `.fi/.sinp` | 화이트 + 헤어라인, radius 4, focus 차콜 보더 |
+| 금액 연산자 버튼 `.amt-op` | 헤어라인 + radius 4, 36px 폭, 금액칸 계산식 입력용(`− + × ÷ ⌫`). `.amt-expr`=뮤트 `= ₩…` 미리보기(오류 시 `--danger`) |
 | 칩 `.chip` | **radius 4(샤프)**, 미선택 아웃라인 / 선택(`.sp/.sj`) = 차콜 채움+화이트 |
 | 필터탭 `.txftab` | radius 4 |
 | 타입배지 `.srow-type` | radius 4 |
