@@ -1802,7 +1802,10 @@ function fixedTotal(type, month) {
 function overBudget(type) {
   return cats(type).filter(c=>c.budgetType!=='none').reduce((s,c) => {
     const bud = getMonthBudget(c.name, type);
-    const net = catNetSpend(c.name, type); // 지출 - 수입
+    // 자산 매도(assetId) 수입은 "지출 상쇄"가 아니라 유동화 → 여유자금에 직접 가산되므로 over에서 제외(이중 반영 방지)
+    const spent  = catSpend(c.name, txOfMonthDir(type,'expense'));
+    const income = txOfMonthDir(type,'income').filter(x=>x.category===c.name && !x.assetId).reduce((a,x)=>a+x.amount,0);
+    const net = spent - income; // 지출 - (매도 아닌 수입)
     return net > bud ? s+(net-bud) : s;
   }, 0);
 }
@@ -1866,9 +1869,11 @@ function calcPersonalRemain(ms) {
   const over  = overBudget('personal');
   const flex  = totalOpening - fixed - prevCard;  // 수입은 catNetSpend→overBudget에서 반영
   const closedBonus = closedSavings('personal');   // 마감 확정 절감액
-  const remain = flex - over + closedBonus;
+  // 자산 매도(현금화) 수입 = 적립으로 커밋됐던 자산을 유동화 → 여유자금 복원(계좌잔고 상승과 대칭)
+  const assetSaleIncome = pIncList.filter(x => x.assetId).reduce((s,x)=>s+x.amount, 0);
+  const remain = flex - over + closedBonus + assetSaleIncome;
   const totalActual = actualAccBal + actualCashBal;
-  return { accOpen, cashOpen, prevCard, fixed, flex, remain, over,
+  return { accOpen, cashOpen, prevCard, fixed, flex, remain, over, assetSaleIncome,
            accSpent, cashSpent, cardSpent, jCardAmt,
            accIncome, cashIncome, totalIncome,
            actualAccBal, actualCashBal, totalActual };
@@ -2061,6 +2066,7 @@ function renderOv(t) {
     if(r.cardSpent>0) notes.push(`${gi('💳')} 신용카드 ${fmt(r.cardSpent)} → 계좌 잔액 변동 없음 · 여유자금에서 차감`);
     if(r.jCardAmt>0) notes.push(`${gi('🔄')} 공동카드 ${fmt(r.jCardAmt)} → 공동잔액 차감 + 개인계좌 보전`);
     if(r.prevCard>0) notes.push(`${gi('📅')} 전월카드 ${fmt(r.prevCard)} → 여유자금에서 차감`);
+    if(r.assetSaleIncome>0) notes.push(`${gi('🪙')} 자산 매도 +${fmt(r.assetSaleIncome)} → 여유자금에 반영`);
     rebateEl.innerHTML=notes.length?`<div style="font-size:11px;color:var(--muted);background:var(--s2);border-radius:8px;padding:8px 12px;margin-top:8px;line-height:1.9">${notes.join('<br>')}</div>`:'';
 
     const txsPI = document.getElementById('txs-p-income');
