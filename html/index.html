@@ -1393,6 +1393,8 @@ function evalExpr(str) {
 }
 // 값에 사칙연산 기호가 있는지(숫자 뒤 '-' 포함) → 수식 모드 판별
 function hasMathOp(s) { return /[+*/×÷()]/.test(s) || /\d\s*-/.test(s); }
+// 부호(선행 +/-) 필드용: 선행 부호 1개를 떼어낸 뒤 연산자가 있으면 수식 모드
+function hasMathOpSigned(s) { const t = (s||'').replace(/^\s*[+-]/, ''); return /[+*/×÷()]/.test(t) || /\d\s*-/.test(t); }
 function updateAmtPreview() {
   const el = document.getElementById('inp-amt');
   const pv = document.getElementById('amt-expr');
@@ -1509,17 +1511,42 @@ function initBudgetDelegation() {
       }
 
       if (el.classList.contains('sinp-comma-adj')) {
-        // 예외 조정 입력 (부호 + 숫자)
+        // 예외 조정 입력 (부호 + 숫자, 계산식 지원)
         const raw = el.value;
+        // 수식 모드: 선행 부호 외 연산자가 있으면 재포맷·커서이동 없이 계산만(blur에서 확정)
+        if (hasMathOpSigned(raw)) {
+          const cleaned = raw.replace(/[^0-9+\-*/×÷().,\s]/g, '');
+          if (cleaned !== raw) {
+            const p = Math.max(0, (el.selectionStart || cleaned.length) - (raw.length - cleaned.length));
+            el.value = cleaned;
+            try { el.setSelectionRange(p, p); } catch(e) {}
+          }
+          const r = evalExpr(el.value);
+          if (r !== null) {
+            const v = Math.round(r);
+            el.style.color = v > 0 ? 'var(--danger)' : v < 0 ? 'var(--ok)' : 'var(--muted)';
+            el.style.borderColor = v ? (v > 0 ? 'var(--danger)' : 'var(--ok)') : 'var(--border)';
+            saveAdjust(el.dataset.type, el.dataset.cat, v);
+          }
+          return;
+        }
+        // 부호 모드 (숫자 콤마 포맷 + 커서 위치 유지)
         const sign = raw.trimStart().startsWith('-') ? '-' : (raw.trimStart().startsWith('+') ? '+' : '');
         const digits = raw.replace(/[^\d]/g, '');
-        if (!digits) { el.value = sign || ''; return; }
+        if (!digits) {
+          el.value = sign || '';
+          el.style.color = 'var(--muted)'; el.style.borderColor = 'var(--border)';
+          saveAdjust(el.dataset.type, el.dataset.cat, 0);
+          return;
+        }
+        const before = raw.slice(0, el.selectionStart).replace(/[^\d]/g, '').length;
         const num = parseInt(digits, 10);
-        const pos = el.selectionStart;
         const formatted = sign + num.toLocaleString('ko-KR');
         el.value = formatted;
-        el.setSelectionRange(formatted.length, formatted.length);
-        // 색상 갱신
+        // 커서 위치 유지: 부호는 비숫자라 무시되고, 숫자 기준 before번째 뒤로 복원
+        let cnt = 0, i = 0;
+        while (i < formatted.length && cnt < before) { if (/\d/.test(formatted[i])) cnt++; i++; }
+        el.setSelectionRange(i, i);
         const val = sign === '-' ? -num : num;
         el.style.color = val > 0 ? 'var(--danger)' : val < 0 ? 'var(--ok)' : 'var(--muted)';
         el.style.borderColor = val ? (val > 0 ? 'var(--danger)' : 'var(--ok)') : 'var(--border)';
@@ -1530,6 +1557,21 @@ function initBudgetDelegation() {
     container.addEventListener('focus', e => {
       const el = e.target;
       if (el.classList.contains('sinp-comma') && el.value) fmtInput(el);
+    }, true);
+
+    // 이번 달 조정 수식 확정(blur): 계산 결과를 (부호)+콤마 형식으로 표기
+    container.addEventListener('blur', e => {
+      const el = e.target;
+      if (el.classList.contains('sinp-comma-adj') && hasMathOpSigned(el.value)) {
+        const r = evalExpr(el.value);
+        if (r !== null) {
+          const v = Math.round(r);
+          el.value = (v > 0 ? '+' : v < 0 ? '-' : '') + Math.abs(v).toLocaleString('ko-KR');
+          el.style.color = v > 0 ? 'var(--danger)' : v < 0 ? 'var(--ok)' : 'var(--muted)';
+          el.style.borderColor = v ? (v > 0 ? 'var(--danger)' : 'var(--ok)') : 'var(--border)';
+          saveAdjust(el.dataset.type, el.dataset.cat, v);
+        }
+      }
     }, true);
   });
 }
