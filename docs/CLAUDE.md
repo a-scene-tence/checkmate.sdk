@@ -358,6 +358,23 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.10 [2026-06-06] "이번 달 조정" 입력 커서가 맨 뒤로 튐 + 계산식 지원 추가
+
+**증상**: 설정 → 고급 설정 → "이번 달 조정"(`.sinp-comma-adj`)에서 중간 숫자 한 개만 수정해도 커서가 즉시 입력값 맨 뒤로 이동 → 연속 수정 불가.
+
+**원인**: 이 필드의 `input` 핸들러(`initBudgetDelegation`)만 재포맷 후 `el.setSelectionRange(formatted.length, formatted.length)`로 **항상 끝**에 캐럿을 놓음. 다른 콤마 필드(`.sinp-comma`/`.sinp-comma-asset`/`bindCommaInput`)는 "캐럿 앞 숫자 개수를 세어 복원"하는 패턴을 쓰는데 이 필드만 누락.
+
+**해결**:
+- 부호 모드에서 `before = raw.slice(0,selectionStart)`의 숫자 개수를 세어, 재포맷 후 그 숫자 위치로 캐럿 복원(부호 `+/-`는 비숫자라 자동 무시).
+- 더불어 계산식 입력 지원: `hasMathOpSigned()`(선행 부호 1개 제거 후 연산자 판별)로 수식/부호 모드 분기, 수식이면 `evalExpr` 재사용해 live 계산 + `blur` 위임 리스너에서 `(부호)+콤마`로 확정.
+- SW v11 → v12. Vercel 개발용(`main-29cm-redesign`)만 적용, AiT 미변경.
+
+**예방책**:
+- ✅ 콤마/포맷 입력 필드를 새로 만들 땐 반드시 "캐럿 앞 숫자 수 세어 복원" 패턴을 사용(끝으로 이동 금지).
+- ✅ 부호·연산자를 받는 입력에서 수식 모드 판별 시 **선행 부호**를 연산자와 구분(`hasMathOpSigned`).
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
