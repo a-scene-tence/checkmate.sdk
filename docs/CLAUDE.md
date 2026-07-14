@@ -375,6 +375,24 @@ merge: claude/consolidate-sdk-deployment-H1RJb - not something we can merge
 
 ---
 
+### 7.11 [2026-06-06] 자산 매도 시 여유자금 미반영
+
+**증상**: 자산 매도(현금화) 실행 시 계좌잔고는 오르는데 대시보드 "현재 여유자금"은 그대로.
+
+**원인**: 매도는 `{category:'적금', assetId, dir:'income'}` 수입 tx를 생성. `calcPersonalRemain`의 `actualAccBal`(계좌잔고)에는 `+accIncome`으로 반영되지만, 여유자금 `remain = flex - over + closedBonus`에는 **수입 항이 없음**. 수입은 `over = Σ max(0, catNetSpend - budget)`의 `catNetSpend(지출-수입)`을 통해 초과지출 상쇄로만 반영되는데, 적금은 보통 예산 이내라 `over`에 안 걸려 매도 수입이 여유자금에 전혀 반영 안 됨.
+
+**해결**:
+- `calcPersonalRemain`: `assetSaleIncome = pIncList.filter(x=>x.assetId)` 합을 `remain`에 가산(적립으로 커밋됐던 자산의 유동화 복원).
+- `overBudget`: 자산 매도(assetId) 수입을 net 계산에서 제외(`지출 - 매도아닌수입`) → 과적립 후 매도 시 **이중 반영 방지**(over 감소 + assetSaleIncome 가산). assetId 수입은 적금 카테고리에만 존재하므로 일반 카테고리 over 불변.
+- 대시보드 `notes`에 "자산 매도 +₩X → 여유자금 반영" 추가. SW v12 → v13.
+- Vercel 개발용(`main-29cm-redesign`)만 적용. **앱인토스(`ait-fix-json-export`)도 동일 버그 존재** — 요청 시 동일 패치 필요.
+
+**예방책**:
+- ✅ 여유자금(`remain`) 산식은 "월초 잔고 - 계획지출"의 planned view라 일반 수입을 더하지 않음. 단, **자산 유동화(매도)처럼 커밋을 되돌리는 흐름**은 예외적으로 가산해야 함(계좌잔고 상승과 대칭).
+- ✅ `assetId`가 붙은 income tx는 "자산 이동(유동화)"이므로 예산/초과지출(`over`·`catNetSpend`) 상쇄 대상에서 구분할 것.
+
+---
+
 ## 8. 문서 업데이트 트리거
 
 다음 작업을 수행한 경우 반드시 해당 문서를 업데이트하세요:
